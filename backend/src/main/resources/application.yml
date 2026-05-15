@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: noteverse-backend
+  data:
+    mongodb:
+      uri: mongodb+srv://NoteVerse_db_user:DQVTcF9Rmfl27KC3@noteverse.sdwhakn.mongodb.net/?appName=NoteVerse
+      database: noteverse
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  # OAuth2 — uncomment and set credentials when ready
+  # security:
+  #   oauth2:
+  #     client:
+  #       registration:
+  #         google:
+  #           client-id: ${GOOGLE_CLIENT_ID:}
+  #           client-secret: ${GOOGLE_CLIENT_SECRET:}
+  #           scope: profile, email
+  #         github:
+  #           client-id: ${GITHUB_CLIENT_ID:}
+  #           client-secret: ${GITHUB_CLIENT_SECRET:}
+  #           scope: user:email
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration
+
+server:
+  port: 8081
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:noteverse-super-secret-key-change-in-production-min-256-bits}
+    access-token-expiry: 86400000    # 24 hours in ms (15 min in prod)
+    refresh-token-expiry: 604800000  # 7 days in ms
+  frontend-url: ${FRONTEND_URL:http://localhost:3000}
+  cors:
+    allowed-origins: ${FRONTEND_URL:http://localhost:3000}
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html

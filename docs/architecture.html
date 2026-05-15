@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NoteVerse — Architecture Documentation</title>
+  <style>
+    :root {
+      --primary: #6C63FF;
+      --primary-light: #8B85FF;
+      --primary-dim: rgba(108,99,255,0.12);
+      --bg: #0f0f1a;
+      --surface: #181828;
+      --surface2: #1f1f35;
+      --border: #2a2a45;
+      --text: #e8e8f0;
+      --muted: #888aaa;
+      --green: #22c55e;
+      --red: #ef4444;
+      --yellow: #eab308;
+      --blue: #3b82f6;
+      --teal: #14b8a6;
+      --orange: #f97316;
+      --pink: #ec4899;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; line-height: 1.6; }
+
+    /* NAV */
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(15,15,26,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 56px; }
+    .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; color: var(--primary-light); }
+    .nav-brand span { width: 32px; height: 32px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .nav-links { display: flex; gap: 4px; }
+    .nav-links a { padding: 6px 14px; border-radius: 6px; color: var(--muted); text-decoration: none; font-size: 13px; transition: all .15s; }
+    .nav-links a:hover { background: var(--surface2); color: var(--text); }
+
+    /* HERO */
+    .hero { text-align: center; padding: 80px 32px 60px; background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(108,99,255,0.25), transparent); }
+    .hero h1 { font-size: 48px; font-weight: 800; background: linear-gradient(135deg, #fff 0%, var(--primary-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 16px; }
+    .hero p { color: var(--muted); font-size: 16px; max-width: 600px; margin: 0 auto 32px; }
+    .badge-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .badge { padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid; }
+    .badge-purple { background: rgba(108,99,255,.15); border-color: rgba(108,99,255,.4); color: var(--primary-light); }
+    .badge-green  { background: rgba(34,197,94,.12); border-color: rgba(34,197,94,.3); color: #4ade80; }
+    .badge-blue   { background: rgba(59,130,246,.12); border-color: rgba(59,130,246,.3); color: #60a5fa; }
+    .badge-orange { background: rgba(249,115,22,.12); border-color: rgba(249,115,22,.3); color: #fb923c; }
+    .badge-teal   { background: rgba(20,184,166,.12); border-color: rgba(20,184,166,.3); color: #2dd4bf; }
+
+    /* LAYOUT */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+    section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+    section:last-child { border-bottom: none; }
+    .section-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+    .section-title .icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .section-subtitle { color: var(--muted); margin-bottom: 36px; font-size: 15px; }
+
+    /* CARDS */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; }
+    .card-sm { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+    @media(max-width:900px){ .grid-2,.grid-3,.grid-4{ grid-template-columns:1fr; } }
+
+    .card-title { font-size: 15px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ARCH DIAGRAM */
+    .arch-diagram { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px 32px; overflow-x: auto; }
+    .arch-row { display: flex; justify-content: center; gap: 0; align-items: center; margin: 8px 0; flex-wrap: wrap; }
+    .arch-box { border-radius: 12px; padding: 14px 20px; font-size: 13px; font-weight: 600; text-align: center; min-width: 130px; border: 1.5px solid; }
+    .arch-arrow { font-size: 22px; color: var(--muted); margin: 0 8px; }
+    .arch-arrow-down { text-align: center; color: var(--muted); font-size: 22px; margin: 4px 0; }
+
+    .layer-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; margin-top: 24px; }
+
+    /* FLOW DIAGRAM */
+    .flow { display: flex; flex-direction: column; gap: 0; }
+    .flow-step { display: flex; align-items: flex-start; gap: 16px; }
+    .flow-line { display: flex; flex-direction: column; align-items: center; }
+    .flow-num { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .flow-connector { width: 2px; flex: 1; min-height: 24px; background: var(--border); margin: 4px 0; }
+    .flow-content { padding-bottom: 20px; flex: 1; }
+    .flow-content h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .flow-content p { font-size: 13px; color: var(--muted); }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { background: var(--surface2); color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: .06em; padding: 10px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+    td { padding: 10px 16px; border-bottom: 1px solid rgba(42,42,69,.5); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,.02); }
+
+    /* CODE */
+    code { background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; font-family: 'Cascadia Code','Fira Code',monospace; font-size: 12px; color: #a5b4fc; }
+    .code-block { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; font-family: 'Cascadia Code','Fira Code',monospace; font-size: 12px; color: #a5b4fc; overflow-x: auto; white-space: pre; line-height: 1.7; }
+
+    /* METHOD PILLS */
+    .method { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 700; margin-right: 6px; }
+    .GET    { background: rgba(34,197,94,.18); color: #4ade80; }
+    .POST   { background: rgba(59,130,246,.18); color: #60a5fa; }
+    .PUT    { background: rgba(234,179,8,.18); color: #facc15; }
+    .DELETE { background: rgba(239,68,68,.18); color: #f87171; }
+
+    /* ENDPOINT LIST */
+    .endpoint { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(42,42,69,.4); }
+    .endpoint:last-child { border-bottom: none; }
+    .endpoint-path { font-family: 'Cascadia Code','Fira Code',monospace; font-size: 12px; color: var(--text); flex: 1; }
+    .endpoint-desc { font-size: 12px; color: var(--muted); min-width: 200px; }
+
+    /* MODEL FIELDS */
+    .field-row { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid rgba(42,42,69,.3); font-size: 13px; }
+    .field-row:last-child { border-bottom: none; }
+    .field-name { font-family: 'Cascadia Code','Fira Code',monospace; color: #a5b4fc; min-width: 160px; }
+    .field-type { color: #2dd4bf; min-width: 100px; font-size: 12px; }
+    .field-note { color: var(--muted); font-size: 12px; }
+
+    /* TAG */
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+
+    /* TECH STACK ICON */
+    .tech-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(42,42,69,.3); }
+    .tech-item:last-child { border-bottom: none; }
+    .tech-icon { font-size: 18px; width: 28px; text-align: center; }
+    .tech-name { font-weight: 600; font-size: 13px; flex: 1; }
+    .tech-ver { font-size: 11px; color: var(--muted); }
+
+    /* SECTION COLORS */
+    .icon-purple { background: rgba(108,99,255,.2); color: var(--primary-light); }
+    .icon-blue   { background: rgba(59,130,246,.2); color: #60a5fa; }
+    .icon-green  { background: rgba(34,197,94,.2); color: #4ade80; }
+    .icon-orange { background: rgba(249,115,22,.2); color: #fb923c; }
+    .icon-teal   { background: rgba(20,184,166,.2); color: #2dd4bf; }
+    .icon-pink   { background: rgba(236,72,153,.2); color: #f472b6; }
+    .icon-yellow { background: rgba(234,179,8,.2); color: #facc15; }
+    .icon-red    { background: rgba(239,68,68,.2); color: #f87171; }
+
+    /* HIGHLIGHT BOX */
+    .highlight-box { border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; border: 1px solid; }
+    .highlight-purple { background: rgba(108,99,255,.08); border-color: rgba(108,99,255,.25); }
+    .highlight-green  { background: rgba(34,197,94,.08);  border-color: rgba(34,197,94,.25); }
+    .highlight-blue   { background: rgba(59,130,246,.08); border-color: rgba(59,130,246,.25); }
+    .highlight-orange { background: rgba(249,115,22,.08); border-color: rgba(249,115,22,.25); }
+
+    /* DB SCHEMA */
+    .db-collection { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
+    .db-collection-header { background: var(--surface2); padding: 12px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
+    .db-collection-name { font-weight: 700; font-size: 14px; }
+    .db-collection-body { padding: 16px 20px; }
+
+    /* FEATURE GRID */
+    .feature-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; transition: border-color .2s; }
+    .feature-card:hover { border-color: rgba(108,99,255,.4); }
+    .feature-icon { font-size: 28px; margin-bottom: 12px; }
+    .feature-title { font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+    .feature-desc { color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .toc-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+    @media(max-width:700px){ .toc-grid{ grid-template-columns:1fr; } }
+    .toc-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; text-decoration: none; color: var(--text); display: flex; align-items: center; gap: 10px; transition: all .15s; font-size: 13px; font-weight: 500; }
+    .toc-item:hover { border-color: rgba(108,99,255,.5); background: var(--surface2); }
+    .toc-item .num { background: var(--primary); color: #fff; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <span>✏️</span>
+    NoteVerse
+  </div>
+  <div class="nav-links">
+    <a href="#overview">Overview</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#backend">Backend</a>
+    <a href="#frontend">Frontend</a>
+    <a href="#database">Database</a>
+    <a href="#flows">Flows</a>
+    <a href="#features">Features</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>NoteVerse Architecture</h1>
+  <p>Complete technical documentation — full-stack SaaS note-taking application built with Spring Boot, React, and MongoDB Atlas.</p>
+  <div class="badge-row">
+    <span class="badge badge-purple">Spring Boot 3.2</span>
+    <span class="badge badge-blue">React 18</span>
+    <span class="badge badge-green">MongoDB Atlas</span>
+    <span class="badge badge-orange">JWT Auth</span>
+    <span class="badge badge-teal">TipTap Editor</span>
+    <span class="badge badge-purple">Tailwind CSS</span>
+    <span class="badge badge-blue">Java 17</span>
+    <span class="badge badge-orange">Swagger / OpenAPI</span>
+  </div>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="container">
+  <section id="toc" style="padding-top:20px">
+    <div class="section-title"><span class="icon icon-purple">📋</span> Table of Contents</div>
+    <div class="toc-grid" style="margin-top:24px">
+      <a href="#overview"    class="toc-item"><span class="num">1</span> System Overview</a>
+      <a href="#architecture"class="toc-item"><span class="num">2</span> Architecture Diagram</a>
+      <a href="#backend"     class="toc-item"><span class="num">3</span> Backend Deep Dive</a>
+      <a href="#api"         class="toc-item"><span class="num">4</span> REST API Endpoints</a>
+      <a href="#frontend"    class="toc-item"><span class="num">5</span> Frontend Architecture</a>
+      <a href="#database"    class="toc-item"><span class="num">6</span> Database Schema</a>
+      <a href="#security"    class="toc-item"><span class="num">7</span> Security Architecture</a>
+      <a href="#flows"       class="toc-item"><span class="num">8</span> Request Flow Diagrams</a>
+      <a href="#features"    class="toc-item"><span class="num">9</span> Feature Reference</a>
+      <a href="#techstack"   class="toc-item"><span class="num">10</span> Tech Stack</a>
+    </div>
+  </section>
+</div>
+
+<!-- 1. OVERVIEW -->
+<div class="container">
+<section id="overview">
+  <div class="section-title"><span class="icon icon-purple">🗺️</span> System Overview</div>
+  <p class="section-subtitle">NoteVerse is a production-grade SaaS note-taking platform. The system is split into two independently deployable services communicating over REST.</p>
+
+  <div class="grid-3" style="margin-bottom:28px">
+    <div class="highlight-box highlight-purple">
+      <div style="font-size:24px;margin-bottom:8px">⚙️</div>
+      <div style="font-weight:700;margin-bottom:6px;font-size:15px">Backend Service</div>
+      <div style="color:var(--muted);font-size:13px">Spring Boot 3.2 + Java 17<br>Running on port <code>8081</code><br>Exposes 40+ REST endpoints<br>Swagger UI at <code>/swagger-ui.html</code></div>
+    </div>
+    <div class="highlight-box highlight-blue">
+      <div style="font-size:24px;margin-bottom:8px">🌐</div>
+      <div style="font-weight:700;margin-bottom:6px;font-size:15px">Frontend App</div>
+      <div style="color:var(--muted);font-size:13px">React 18 + Tailwind CSS<br>Running on port <code>3000</code><br>13 pages, 15+ components<br>Dark/Light theme support</div>
+    </div>
+    <div class="highlight-box highlight-green">
+      <div style="font-size:24px;margin-bottom:8px">🍃</div>
+      <div style="font-weight:700;margin-bottom:6px;font-size:15px">Database</div>
+      <div style="color:var(--muted);font-size:13px">MongoDB Atlas (Cloud)<br>10 collections<br>Replica Set cluster<br>Region: AP South 1 (AWS)</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:var(--primary)"></span> Project Directory Structure</div>
+    <div class="code-block">NoteVerse/
+├── frontend/                          # React 18 SPA
+│   ├── public/
+│   │   ├── index.html
+│   │   └── manifest.json              # PWA manifest
+│   └── src/
+│       ├── api/                       # Axios API layer (7 files)
+│       │   ├── axiosInstance.js       # Base config + auto refresh + retry queue
+│       │   ├── auth.js                # Auth endpoints
+│       │   ├── notes.js               # Notes CRUD + sharing
+│       │   ├── folders.js             # Folder management
+│       │   ├── tags.js                # Tag management
+│       │   ├── collaborate.js         # Collaboration endpoints
+│       │   ├── ai.js                  # AI feature endpoints
+│       │   └── settings.js            # User settings
+│       ├── components/                # Reusable UI (15 components)
+│       │   ├── layout/                # Sidebar, Navbar
+│       │   ├── notes/                 # NoteCard, NoteList, NoteEditor, EditorToolbar, CollaborateModal
+│       │   ├── common/                # Button, Modal, Input, LoadingSpinner, TagPill
+│       │   └── ai/                    # AIPanel
+│       ├── context/                   # React Context (3 providers)
+│       │   ├── AuthContext.js         # Auth state + JWT management
+│       │   ├── NoteContext.js         # Notes/folders/tags state
+│       │   └── ThemeContext.js        # Dark/light theme
+│       ├── hooks/                     # Custom hooks
+│       │   ├── useAuth.js
+│       │   ├── useDebounce.js
+│       │   └── useLocalStorage.js
+│       ├── pages/                     # 13 page components
+│       ├── routes/                    # AppRouter, PrivateRoute, PublicRoute
+│       ├── styles/                    # global.css (Tailwind + custom)
+│       └── utils/                     # helpers, constants, validators
+│
+└── backend/                           # Spring Boot 3.2 API
+    └── src/main/java/com/noteverse/
+        ├── config/                    # SecurityConfig, CorsConfig, SwaggerConfig
+        ├── controller/                # 9 REST controllers
+        ├── dto/                       # Request/Response DTOs (20+ classes)
+        ├── exception/                 # GlobalExceptionHandler + custom exceptions
+        ├── filter/                    # JwtAuthFilter
+        ├── model/                     # 10 MongoDB document models
+        ├── repository/                # 10 Spring Data repositories
+        ├── security/                  # JwtUtils, UserDetailsServiceImpl
+        └── service/                   # 10 business logic services</div>
+  </div>
+</section>
+</div>
+
+<!-- 2. ARCHITECTURE DIAGRAM -->
+<div class="container">
+<section id="architecture">
+  <div class="section-title"><span class="icon icon-blue">🏗️</span> Architecture Diagram</div>
+  <p class="section-subtitle">High-level system architecture showing all layers and their interactions.</p>
+
+  <div class="arch-diagram">
+
+    <!-- CLIENT LAYER -->
+    <div class="layer-label">🌐 Client Layer — Browser</div>
+    <div class="arch-row">
+      <div class="arch-box" style="background:rgba(108,99,255,.12);border-color:rgba(108,99,255,.4);color:#a5b4fc;width:100%;max-width:700px">
+        <div style="font-size:12px;margin-bottom:8px;color:var(--muted)">React 18 SPA · Tailwind CSS · Framer Motion · TipTap Editor</div>
+        <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
+          <span style="background:rgba(108,99,255,.2);padding:4px 12px;border-radius:6px;font-size:12px">AuthContext</span>
+          <span style="background:rgba(108,99,255,.2);padding:4px 12px;border-radius:6px;font-size:12px">NoteContext</span>
+          <span style="background:rgba(108,99,255,.2);padding:4px 12px;border-radius:6px;font-size:12px">ThemeContext</span>
+          <span style="background:rgba(108,99,255,.2);padding:4px 12px;border-radius:6px;font-size:12px">Axios + Auto-Refresh</span>
+          <span style="background:rgba(108,99,255,.2);padding:4px 12px;border-radius:6px;font-size:12px">React Query</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="arch-arrow-down">↕ HTTPS REST + JSON (port 3000 → 8081)</div>
+
+    <!-- API GATEWAY LAYER -->
+    <div class="layer-label">🔒 Security / Filter Layer — Spring Boot</div>
+    <div class="arch-row" style="gap:12px">
+      <div class="arch-box" style="background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.35);color:#f87171">CORS Filter<br><small style="font-weight:400;color:var(--muted)">Origin validation</small></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box" style="background:rgba(234,179,8,.1);border-color:rgba(234,179,8,.35);color:#facc15">JWT Auth Filter<br><small style="font-weight:400;color:var(--muted)">Token extraction</small></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box" style="background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.35);color:#fb923c">Spring Security<br><small style="font-weight:400;color:var(--muted)">Auth + AuthZ</small></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box" style="background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.35);color:#60a5fa">Dispatcher Servlet<br><small style="font-weight:400;color:var(--muted)">Request routing</small></div>
+    </div>
+
+    <div class="arch-arrow-down">↓</div>
+
+    <!-- CONTROLLER LAYER -->
+    <div class="layer-label">🎮 Controller Layer — REST Endpoints</div>
+    <div class="arch-row" style="gap:8px;flex-wrap:wrap">
+      <div class="arch-box" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:#4ade80;font-size:12px">/api/auth<br><small style="color:var(--muted);font-weight:400">AuthController</small></div>
+      <div class="arch-box" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:#4ade80;font-size:12px">/api/notes<br><small style="color:var(--muted);font-weight:400">NoteController</small></div>
+      <div class="arch-box" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:#4ade80;font-size:12px">/api/folders<br><small style="color:var(--muted);font-weight:400">FolderController</small></div>
+      <div class="arch-box" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:#4ade80;font-size:12px">/api/tags<br><small style="color:var(--muted);font-weight:400">TagController</small></div>
+      <div class="arch-box" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:#4ade80;font-size:12px">/api/share<br><small style="color:var(--muted);font-weight:400">ShareController</small></div>
+      <div class="arch-box" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:#4ade80;font-size:12px">/api/collaborate<br><small style="color:var(--muted);font-weight:400">CollaborateCtrl</small></div>
+      <div class="arch-box" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:#4ade80;font-size:12px">/api/ai<br><small style="color:var(--muted);font-weight:400">AIController</small></div>
+      <div class="arch-box" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:#4ade80;font-size:12px">/api/settings<br><small style="color:var(--muted);font-weight:400">SettingsCtrl</small></div>
+      <div class="arch-box" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:#4ade80;font-size:12px">/api/export<br><small style="color:var(--muted);font-weight:400">ExportController</small></div>
+    </div>
+
+    <div class="arch-arrow-down">↓</div>
+
+    <!-- SERVICE LAYER -->
+    <div class="layer-label">⚙️ Service Layer — Business Logic</div>
+    <div class="arch-row" style="gap:8px;flex-wrap:wrap">
+      <div class="arch-box" style="background:rgba(20,184,166,.1);border-color:rgba(20,184,166,.3);color:#2dd4bf;font-size:12px">AuthService<br><small style="color:var(--muted);font-weight:400">JWT · 2FA · OAuth</small></div>
+      <div class="arch-box" style="background:rgba(20,184,166,.1);border-color:rgba(20,184,166,.3);color:#2dd4bf;font-size:12px">NoteService<br><small style="color:var(--muted);font-weight:400">CRUD · Access Control</small></div>
+      <div class="arch-box" style="background:rgba(20,184,166,.1);border-color:rgba(20,184,166,.3);color:#2dd4bf;font-size:12px">FolderService<br><small style="color:var(--muted);font-weight:400">Nested folders</small></div>
+      <div class="arch-box" style="background:rgba(20,184,166,.1);border-color:rgba(20,184,166,.3);color:#2dd4bf;font-size:12px">ShareService<br><small style="color:var(--muted);font-weight:400">Token generation</small></div>
+      <div class="arch-box" style="background:rgba(20,184,166,.1);border-color:rgba(20,184,166,.3);color:#2dd4bf;font-size:12px">CollaborateService<br><small style="color:var(--muted);font-weight:400">R/W permissions</small></div>
+      <div class="arch-box" style="background:rgba(20,184,166,.1);border-color:rgba(20,184,166,.3);color:#2dd4bf;font-size:12px">AIService<br><small style="color:var(--muted);font-weight:400">Summarize · Rewrite</small></div>
+      <div class="arch-box" style="background:rgba(20,184,166,.1);border-color:rgba(20,184,166,.3);color:#2dd4bf;font-size:12px">EmailService<br><small style="color:var(--muted);font-weight:400">SMTP notifications</small></div>
+    </div>
+
+    <div class="arch-arrow-down">↓</div>
+
+    <!-- REPOSITORY LAYER -->
+    <div class="layer-label">🗄️ Repository Layer — Spring Data MongoDB</div>
+    <div class="arch-row" style="gap:8px;flex-wrap:wrap">
+      <div class="arch-box" style="background:rgba(236,72,153,.1);border-color:rgba(236,72,153,.3);color:#f472b6;font-size:12px">UserRepository</div>
+      <div class="arch-box" style="background:rgba(236,72,153,.1);border-color:rgba(236,72,153,.3);color:#f472b6;font-size:12px">NoteRepository</div>
+      <div class="arch-box" style="background:rgba(236,72,153,.1);border-color:rgba(236,72,153,.3);color:#f472b6;font-size:12px">FolderRepository</div>
+      <div class="arch-box" style="background:rgba(236,72,153,.1);border-color:rgba(236,72,153,.3);color:#f472b6;font-size:12px">TagRepository</div>
+      <div class="arch-box" style="background:rgba(236,72,153,.1);border-color:rgba(236,72,153,.3);color:#f472b6;font-size:12px">CommentRepository</div>
+      <div class="arch-box" style="background:rgba(236,72,153,.1);border-color:rgba(236,72,153,.3);color:#f472b6;font-size:12px">SharedLinkRepository</div>
+      <div class="arch-box" style="background:rgba(236,72,153,.1);border-color:rgba(236,72,153,.3);color:#f472b6;font-size:12px">SessionRepository</div>
+      <div class="arch-box" style="background:rgba(236,72,153,.1);border-color:rgba(236,72,153,.3);color:#f472b6;font-size:12px">AuditLogRepository</div>
+    </div>
+
+    <div class="arch-arrow-down">↕ MongoDB Wire Protocol (TLS)</div>
+
+    <!-- DATABASE LAYER -->
+    <div class="layer-label">☁️ Database Layer — MongoDB Atlas (AWS AP-South-1)</div>
+    <div class="arch-row">
+      <div class="arch-box" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:#4ade80;width:100%;max-width:680px">
+        <div style="font-size:12px;margin-bottom:8px;color:var(--muted)">Replica Set · 3 nodes · TLS encrypted · noteverse database</div>
+        <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
+          <span style="background:rgba(34,197,94,.15);padding:3px 10px;border-radius:5px;font-size:11px">users</span>
+          <span style="background:rgba(34,197,94,.15);padding:3px 10px;border-radius:5px;font-size:11px">notes</span>
+          <span style="background:rgba(34,197,94,.15);padding:3px 10px;border-radius:5px;font-size:11px">folders</span>
+          <span style="background:rgba(34,197,94,.15);padding:3px 10px;border-radius:5px;font-size:11px">tags</span>
+          <span style="background:rgba(34,197,94,.15);padding:3px 10px;border-radius:5px;font-size:11px">comments</span>
+          <span style="background:rgba(34,197,94,.15);padding:3px 10px;border-radius:5px;font-size:11px">shared_links</span>
+          <span style="background:rgba(34,197,94,.15);padding:3px 10px;border-radius:5px;font-size:11px">sessions</span>
+          <span style="background:rgba(34,197,94,.15);padding:3px 10px;border-radius:5px;font-size:11px">notifications</span>
+          <span style="background:rgba(34,197,94,.15);padding:3px 10px;border-radius:5px;font-size:11px">audit_logs</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXTERNAL SERVICES -->
+    <div class="layer-label" style="margin-top:32px">🔌 External Services</div>
+    <div class="arch-row" style="gap:12px">
+      <div class="arch-box" style="background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.3);color:#fb923c;font-size:12px">📧 SMTP / Gmail<br><small style="color:var(--muted);font-weight:400">Password reset OTPs<br>Verification emails</small></div>
+      <div class="arch-box" style="background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.3);color:#60a5fa;font-size:12px">🔑 Google OAuth2<br><small style="color:var(--muted);font-weight:400">Social login<br>(config ready)</small></div>
+      <div class="arch-box" style="background:rgba(36,36,36,.5);border-color:rgba(255,255,255,.15);color:#ccc;font-size:12px">🐱 GitHub OAuth2<br><small style="color:var(--muted);font-weight:400">Social login<br>(config ready)</small></div>
+      <div class="arch-box" style="background:rgba(108,99,255,.1);border-color:rgba(108,99,255,.3);color:var(--primary-light);font-size:12px">🤖 AI Provider<br><small style="color:var(--muted);font-weight:400">Stubbed endpoints<br>OpenAI / Anthropic</small></div>
+    </div>
+
+  </div>
+</section>
+</div>
+
+<!-- 3. BACKEND DEEP DIVE -->
+<div class="container">
+<section id="backend">
+  <div class="section-title"><span class="icon icon-orange">⚙️</span> Backend Deep Dive</div>
+  <p class="section-subtitle">Spring Boot 3.2 application structured with layered architecture — Config → Security → Controller → Service → Repository → Model.</p>
+
+  <div class="grid-2" style="margin-bottom:24px">
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:#fb923c"></span> Application Config</div>
+      <div class="field-row"><span class="field-name">Framework</span><span class="field-type">Spring Boot 3.2.0</span></div>
+      <div class="field-row"><span class="field-name">Java Version</span><span class="field-type">Java 17 (LTS)</span></div>
+      <div class="field-row"><span class="field-name">Server Port</span><span class="field-type">8081</span></div>
+      <div class="field-row"><span class="field-name">Build Tool</span><span class="field-type">Maven 3.x</span></div>
+      <div class="field-row"><span class="field-name">Database</span><span class="field-type">MongoDB Atlas</span></div>
+      <div class="field-row"><span class="field-name">API Docs</span><span class="field-type">/swagger-ui.html</span></div>
+      <div class="field-row"><span class="field-name">CORS Origin</span><span class="field-type">http://localhost:3000</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:#facc15"></span> JWT Configuration</div>
+      <div class="field-row"><span class="field-name">Algorithm</span><span class="field-type">HMAC-SHA256</span></div>
+      <div class="field-row"><span class="field-name">Access Token TTL</span><span class="field-type">24h (dev) / 15min (prod)</span></div>
+      <div class="field-row"><span class="field-name">Refresh Token TTL</span><span class="field-type">7 days</span></div>
+      <div class="field-row"><span class="field-name">Token Storage (FE)</span><span class="field-type">localStorage</span></div>
+      <div class="field-row"><span class="field-name">Refresh Storage (BE)</span><span class="field-type">MongoDB sessions</span></div>
+      <div class="field-row"><span class="field-name">Filter Class</span><span class="field-type">JwtAuthFilter</span></div>
+      <div class="field-row"><span class="field-name">Header</span><span class="field-type">Authorization: Bearer {token}</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:24px">
+    <div class="card-title"><span class="dot" style="background:var(--primary)"></span> Security Filter Chain (Request Lifecycle)</div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px">
+      <div style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#f87171;text-align:center">HTTP Request<br><small style="color:var(--muted)">from browser</small></div>
+      <span style="color:var(--muted)">→</span>
+      <div style="background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#fb923c;text-align:center">CORS Filter<br><small style="color:var(--muted)">AllowOrigin check</small></div>
+      <span style="color:var(--muted)">→</span>
+      <div style="background:rgba(234,179,8,.15);border:1px solid rgba(234,179,8,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#facc15;text-align:center">JwtAuthFilter<br><small style="color:var(--muted)">Extract + validate token</small></div>
+      <span style="color:var(--muted)">→</span>
+      <div style="background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#4ade80;text-align:center">SecurityContext<br><small style="color:var(--muted)">Set Authentication</small></div>
+      <span style="color:var(--muted)">→</span>
+      <div style="background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#60a5fa;text-align:center">Controller<br><small style="color:var(--muted)">authentication.getName()</small></div>
+      <span style="color:var(--muted)">→</span>
+      <div style="background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#a5b4fc;text-align:center">Service<br><small style="color:var(--muted)">resolveUserId(email)</small></div>
+      <span style="color:var(--muted)">→</span>
+      <div style="background:rgba(20,184,166,.15);border:1px solid rgba(20,184,166,.3);border-radius:8px;padding:8px 14px;font-size:12px;color:#2dd4bf;text-align:center">Repository<br><small style="color:var(--muted)">MongoDB query</small></div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:#4ade80"></span> Public Endpoints (No Auth)</div>
+      <div style="font-size:13px;color:var(--muted);line-height:2">
+        <code>POST /api/auth/register</code><br>
+        <code>POST /api/auth/login</code><br>
+        <code>POST /api/auth/refresh</code><br>
+        <code>POST /api/auth/forgot-password</code><br>
+        <code>POST /api/auth/reset-password</code><br>
+        <code>GET  /api/share/public/{token}</code><br>
+        <code>GET  /swagger-ui.html</code>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:#facc15"></span> Exception Handling</div>
+      <div style="font-size:13px;line-height:2.2;color:var(--muted)">
+        <code style="color:#f87171">ResourceNotFoundException</code> → 404<br>
+        <code style="color:#f87171">UnauthorizedException</code> → 401<br>
+        <code style="color:#f87171">BadRequestException</code> → 400<br>
+        <code style="color:#f87171">MethodArgumentNotValid</code> → 400<br>
+        <code style="color:#f87171">AccessDeniedException</code> → 403<br>
+        All caught by <code>GlobalExceptionHandler</code>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:#60a5fa"></span> Standard API Response</div>
+      <div class="code-block" style="font-size:11px">{
+  "success": true,
+  "message": "Note retrieved",
+  "data": { ... },
+  "timestamp": "2026-05-15T..."
+}
+
+// Error response:
+{
+  "success": false,
+  "message": "Note not found",
+  "data": null,
+  "timestamp": "..."
+}</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- 4. API ENDPOINTS -->
+<div class="container">
+<section id="api">
+  <div class="section-title"><span class="icon icon-green">🔌</span> REST API Endpoints</div>
+  <p class="section-subtitle">All 40+ REST endpoints organised by controller. All authenticated endpoints require <code>Authorization: Bearer {token}</code> header.</p>
+
+  <!-- AUTH -->
+  <div class="db-collection" style="margin-bottom:20px">
+    <div class="db-collection-header">
+      <span style="font-size:18px">🔐</span>
+      <div class="db-collection-name">Auth — <code style="font-size:12px">/api/auth</code></div>
+      <span style="margin-left:auto;font-size:12px;color:var(--muted)">No auth required</span>
+    </div>
+    <div class="db-collection-body">
+      <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/register</span><span class="endpoint-desc">Register new user with name, email, password</span></div>
+      <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/login</span><span class="endpoint-desc">Login — returns accessToken, refreshToken, user</span></div>
+      <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/refresh</span><span class="endpoint-desc">Exchange refreshToken for new accessToken</span></div>
+      <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/logout</span><span class="endpoint-desc">Invalidate session and refresh token</span></div>
+      <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/forgot-password</span><span class="endpoint-desc">Send 6-digit OTP to email (expires 15 min)</span></div>
+      <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/reset-password</span><span class="endpoint-desc">Reset password using email + OTP + newPassword</span></div>
+      <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/2fa/setup</span><span class="endpoint-desc">Generate TOTP secret + QR code URI</span></div>
+      <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/2fa/verify</span><span class="endpoint-desc">Verify TOTP code and enable 2FA</span></div>
+      <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/2fa/disable</span><span class="endpoint-desc">Disable 2FA for the account</span></div>
+    </div>
+  </div>
+
+  <!-- NOTES -->
+  <div class="db-collection" style="margin-bottom:20px">
+    <div class="db-collection-header">
+      <span style="font-size:18px">📝</span>
+      <div class="db-collection-name">Notes — <code style="font-size:12px">/api/notes</code></div>
+      <span style="margin-left:auto;font-size:12px;color:var(--muted)">Auth required</span>
+    </div>
+    <div class="db-collection-body">
+      <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/</span><span class="endpoint-desc">Paginated notes (params: page, size, sort, folderId, isPinned, isFavourite, search)</span></div>
+      <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/</span><span class="endpoint-desc">Create note with title, content, folderId, tags, isPinned, isFavourite</span></div>
+      <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/{id}</span><span class="endpoint-desc">Get note by ID (owner or collaborator). Increments viewCount</span></div>
+      <div class="endpoint"><span class="method PUT">PUT</span><span class="endpoint-path">/{id}</span><span class="endpoint-desc">Update note (owner or WRITE collaborator). Increments version</span></div>
+      <div class="endpoint"><span class="method DELETE">DELETE</span><span class="endpoint-path">/{id}</span><span class="endpoint-desc">Soft delete — sets isDeleted=true, records deletedAt</span></div>
+      <div class="endpoint"><span class="method DELETE">DELETE</span><span class="endpoint-path">/{id}/permanent</span><span class="endpoint-desc">Hard delete — removes from MongoDB permanently</span></div>
+      <div class="endpoint"><span class="method PUT">PUT</span><span class="endpoint-path">/{id}/restore</span><span class="endpoint-desc">Restore from trash — sets isDeleted=false</span></div>
+      <div class="endpoint"><span class="method PUT">PUT</span><span class="endpoint-path">/{id}/pin</span><span class="endpoint-desc">Toggle isPinned boolean</span></div>
+      <div class="endpoint"><span class="method PUT">PUT</span><span class="endpoint-path">/{id}/favourite</span><span class="endpoint-desc">Toggle isFavourite boolean</span></div>
+      <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/{id}/lock</span><span class="endpoint-desc">Lock note with BCrypt-hashed password</span></div>
+      <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/{id}/unlock</span><span class="endpoint-desc">Verify password and unlock note</span></div>
+      <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/shared-with-me</span><span class="endpoint-desc">Notes where current user is a collaborator</span></div>
+      <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/trash</span><span class="endpoint-desc">All soft-deleted notes for the user</span></div>
+      <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/search?q={query}</span><span class="endpoint-desc">Full-text search on title + content (MongoDB regex)</span></div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:20px">
+    <!-- FOLDERS -->
+    <div class="db-collection">
+      <div class="db-collection-header">
+        <span style="font-size:16px">📁</span>
+        <div class="db-collection-name">Folders — <code style="font-size:11px">/api/folders</code></div>
+      </div>
+      <div class="db-collection-body">
+        <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/</span><span class="endpoint-desc">All folders for user</span></div>
+        <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/</span><span class="endpoint-desc">Create folder (name, parentId?)</span></div>
+        <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/{id}</span><span class="endpoint-desc">Get single folder</span></div>
+        <div class="endpoint"><span class="method PUT">PUT</span><span class="endpoint-path">/{id}</span><span class="endpoint-desc">Rename folder</span></div>
+        <div class="endpoint"><span class="method DELETE">DELETE</span><span class="endpoint-path">/{id}</span><span class="endpoint-desc">Delete folder (notes preserved)</span></div>
+      </div>
+    </div>
+    <!-- TAGS -->
+    <div class="db-collection">
+      <div class="db-collection-header">
+        <span style="font-size:16px">🏷️</span>
+        <div class="db-collection-name">Tags — <code style="font-size:11px">/api/tags</code></div>
+      </div>
+      <div class="db-collection-body">
+        <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/</span><span class="endpoint-desc">All tags for user</span></div>
+        <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/</span><span class="endpoint-desc">Create tag (name, color)</span></div>
+        <div class="endpoint"><span class="method PUT">PUT</span><span class="endpoint-path">/{id}</span><span class="endpoint-desc">Update tag name/color</span></div>
+        <div class="endpoint"><span class="method DELETE">DELETE</span><span class="endpoint-path">/{id}</span><span class="endpoint-desc">Delete tag</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:20px">
+    <!-- SHARE -->
+    <div class="db-collection">
+      <div class="db-collection-header"><span>🔗</span><div class="db-collection-name">Share — <code style="font-size:10px">/api/share</code></div></div>
+      <div class="db-collection-body">
+        <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/{noteId}</span><span class="endpoint-desc">Generate share token</span></div>
+        <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/public/{token}</span><span class="endpoint-desc">Access note (no auth)</span></div>
+        <div class="endpoint"><span class="method DELETE">DELETE</span><span class="endpoint-path">/{id}</span><span class="endpoint-desc">Revoke share link</span></div>
+      </div>
+    </div>
+    <!-- COLLABORATE -->
+    <div class="db-collection">
+      <div class="db-collection-header"><span>👥</span><div class="db-collection-name">Collaborate — <code style="font-size:10px">/api/collaborate</code></div></div>
+      <div class="db-collection-body">
+        <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/{noteId}/invite</span><span class="endpoint-desc">Invite by email + READ/WRITE</span></div>
+        <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/{noteId}</span><span class="endpoint-desc">List collaborators</span></div>
+        <div class="endpoint"><span class="method DELETE">DELETE</span><span class="endpoint-path">/{noteId}/{userId}</span><span class="endpoint-desc">Remove collaborator</span></div>
+      </div>
+    </div>
+    <!-- AI + EXPORT -->
+    <div class="db-collection">
+      <div class="db-collection-header"><span>🤖</span><div class="db-collection-name">AI + Export</div></div>
+      <div class="db-collection-body">
+        <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/ai/summarize</span><span class="endpoint-desc">Summarize note content</span></div>
+        <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/ai/grammar</span><span class="endpoint-desc">Grammar correction</span></div>
+        <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/ai/rewrite</span><span class="endpoint-desc">Rewrite with instruction</span></div>
+        <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/export/{id}/markdown</span><span class="endpoint-desc">Download as .md</span></div>
+        <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/export/{id}/text</span><span class="endpoint-desc">Download as .txt</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- 5. FRONTEND -->
+<div class="container">
+<section id="frontend">
+  <div class="section-title"><span class="icon icon-blue">🌐</span> Frontend Architecture</div>
+  <p class="section-subtitle">React 18 Single Page Application with context-based state management, Axios interceptors for auto-refresh, and TipTap rich text editor.</p>
+
+  <!-- STATE MANAGEMENT -->
+  <div class="card" style="margin-bottom:24px">
+    <div class="card-title"><span class="dot" style="background:#60a5fa"></span> State Management — React Context API</div>
+    <div class="grid-3" style="margin-top:12px">
+      <div class="card-sm">
+        <div style="font-weight:700;font-size:13px;color:#a5b4fc;margin-bottom:10px">AuthContext</div>
+        <div style="font-size:12px;color:var(--muted);line-height:2">
+          <strong style="color:var(--text)">State:</strong> user, accessToken, loading<br>
+          <strong style="color:var(--text)">Methods:</strong><br>
+          · login(email, pw, totp?)<br>
+          · register(name, email, pw)<br>
+          · logout()<br>
+          · refreshAccessToken()<br>
+          · updateUser(data)<br>
+          · loginWithGoogle(token)<br>
+          <strong style="color:var(--text)">Persistence:</strong> localStorage
+        </div>
+      </div>
+      <div class="card-sm">
+        <div style="font-weight:700;font-size:13px;color:#4ade80;margin-bottom:10px">NoteContext</div>
+        <div style="font-size:12px;color:var(--muted);line-height:2">
+          <strong style="color:var(--text)">State:</strong> notes, folders, tags<br>selectedNote, selectedFolder<br>
+          <strong style="color:var(--text)">Methods:</strong><br>
+          · refreshNotes(params?)<br>
+          · refreshFolders()<br>
+          · refreshTags()<br>
+          · setSelectedNote(note)<br>
+          · setSelectedFolder(folder)<br>
+          <strong style="color:var(--text)">Used by:</strong> Dashboard, Sidebar
+        </div>
+      </div>
+      <div class="card-sm">
+        <div style="font-weight:700;font-size:13px;color:#facc15;margin-bottom:10px">ThemeContext</div>
+        <div style="font-size:12px;color:var(--muted);line-height:2">
+          <strong style="color:var(--text)">State:</strong> theme ('dark' | 'light')<br>
+          <strong style="color:var(--text)">Methods:</strong><br>
+          · toggleTheme()<br>
+          <strong style="color:var(--text)">How it works:</strong><br>
+          Adds/removes .dark class on &lt;html&gt;<br>
+          Tailwind darkMode: 'class'<br>
+          CSS overrides in global.css<br>
+          <strong style="color:var(--text)">Persistence:</strong> localStorage
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGES -->
+  <div class="card" style="margin-bottom:24px">
+    <div class="card-title"><span class="dot" style="background:#f472b6"></span> Pages (13)</div>
+    <div class="table-wrap" style="margin-top:12px">
+      <table>
+        <thead><tr><th>Page</th><th>Route</th><th>Auth</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><strong>LandingPage</strong></td><td><code>/</code></td><td><span class="tag" style="background:rgba(34,197,94,.15);color:#4ade80">Public</span></td><td>Marketing hero, features, CTA to sign up</td></tr>
+          <tr><td><strong>LoginPage</strong></td><td><code>/login</code></td><td><span class="tag" style="background:rgba(34,197,94,.15);color:#4ade80">Public</span></td><td>Email/password, Google OAuth, 2FA code entry</td></tr>
+          <tr><td><strong>RegisterPage</strong></td><td><code>/register</code></td><td><span class="tag" style="background:rgba(34,197,94,.15);color:#4ade80">Public</span></td><td>User registration form with validation</td></tr>
+          <tr><td><strong>ForgotPasswordPage</strong></td><td><code>/forgot-password</code></td><td><span class="tag" style="background:rgba(34,197,94,.15);color:#4ade80">Public</span></td><td>Request OTP, reset password form</td></tr>
+          <tr><td><strong>SharedNotePage</strong></td><td><code>/share/:token</code></td><td><span class="tag" style="background:rgba(34,197,94,.15);color:#4ade80">Public</span></td><td>Read-only view of shared note (no login needed)</td></tr>
+          <tr><td><strong>DashboardPage</strong></td><td><code>/dashboard</code></td><td><span class="tag" style="background:rgba(108,99,255,.15);color:#a5b4fc">Private</span></td><td>Note grid/list, filters (folder/pin/fav/search), create note</td></tr>
+          <tr><td><strong>NoteEditorPage</strong></td><td><code>/notes/:id</code></td><td><span class="tag" style="background:rgba(108,99,255,.15);color:#a5b4fc">Private</span></td><td>Full TipTap editor, auto-save, AI panel, share, collaborate, lock/unlock, pin/fav</td></tr>
+          <tr><td><strong>FavouritesPage</strong></td><td><code>/favourites</code></td><td><span class="tag" style="background:rgba(108,99,255,.15);color:#a5b4fc">Private</span></td><td>Filtered view of favourite notes</td></tr>
+          <tr><td><strong>SharedWithMePage</strong></td><td><code>/shared-with-me</code></td><td><span class="tag" style="background:rgba(108,99,255,.15);color:#a5b4fc">Private</span></td><td>Notes where current user is a collaborator</td></tr>
+          <tr><td><strong>TrashPage</strong></td><td><code>/trash</code></td><td><span class="tag" style="background:rgba(108,99,255,.15);color:#a5b4fc">Private</span></td><td>Deleted notes with restore / permanent delete</td></tr>
+          <tr><td><strong>SearchPage</strong></td><td><code>/search</code></td><td><span class="tag" style="background:rgba(108,99,255,.15);color:#a5b4fc">Private</span></td><td>Full-text search with highlight, debounced input</td></tr>
+          <tr><td><strong>SettingsPage</strong></td><td><code>/settings</code></td><td><span class="tag" style="background:rgba(108,99,255,.15);color:#a5b4fc">Private</span></td><td>Profile, password change, 2FA, sessions, audit logs</td></tr>
+          <tr><td><strong>NotFoundPage</strong></td><td><code>/*</code></td><td><span class="tag" style="background:rgba(34,197,94,.15);color:#4ade80">Public</span></td><td>404 page</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- AXIOS INTERCEPTOR -->
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#2dd4bf"></span> Axios Auto-Refresh Flow (axiosInstance.js)</div>
+    <div class="grid-2" style="margin-top:12px">
+      <div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:12px">When any API call returns 401 (token expired), the interceptor automatically refreshes and retries:</div>
+        <div class="flow">
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-num">1</div><div class="flow-connector"></div></div>
+            <div class="flow-content"><h4>API request fires → 401 response</h4><p>Token has expired. Interceptor catches the error.</p></div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-num">2</div><div class="flow-connector"></div></div>
+            <div class="flow-content"><h4>Check if already refreshing</h4><p>If yes, queue this request in <code>refreshQueue[]</code> (prevents concurrent refresh race condition).</p></div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-num">3</div><div class="flow-connector"></div></div>
+            <div class="flow-content"><h4>POST /api/auth/refresh</h4><p>Send refreshToken from localStorage. Receive new accessToken.</p></div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-num">4</div><div class="flow-connector"></div></div>
+            <div class="flow-content"><h4>Store new token + drain queue</h4><p>Save to localStorage, update Auth header, replay all queued requests with new token.</p></div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-line"><div class="flow-num">5</div></div>
+            <div class="flow-content"><h4>Refresh fails → logout</h4><p>Clear tokens, redirect to <code>/login</code>.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="code-block" style="font-size:11px">// axiosInstance.js key logic
+
+let isRefreshing = false;
+let refreshQueue = [];
+
+const drainQueue = (token) => {
+  refreshQueue.forEach(cb => cb(token));
+  refreshQueue = [];
+};
+
+// 401 interceptor
+if (error.response?.status === 401) {
+  if (isRefreshing) {
+    // Queue this request
+    return new Promise(resolve => {
+      refreshQueue.push(token => {
+        original.headers.Authorization
+          = `Bearer ${token}`;
+        resolve(axiosInstance(original));
+      });
+    });
+  }
+  isRefreshing = true;
+  try {
+    const res = await authApi.refresh(
+      { refreshToken }
+    );
+    const newToken = res.data.data.accessToken;
+    localStorage.setItem('token', newToken);
+    drainQueue(newToken);
+    return axiosInstance(original);
+  } catch {
+    logout(); // clear + redirect
+  } finally {
+    isRefreshing = false;
+  }
+}</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- 6. DATABASE -->
+<div class="container">
+<section id="database">
+  <div class="section-title"><span class="icon icon-green">🍃</span> Database Schema</div>
+  <p class="section-subtitle">MongoDB Atlas — 10 collections in the <code>noteverse</code> database. Connection via replica set (3 nodes, TLS). Managed by Spring Data MongoDB.</p>
+
+  <div class="grid-2">
+
+    <!-- USERS -->
+    <div class="db-collection">
+      <div class="db-collection-header" style="background:rgba(108,99,255,.1)">
+        <span>👤</span>
+        <div class="db-collection-name">users</div>
+        <code style="margin-left:auto;font-size:10px;color:var(--muted)">@Document("users")</code>
+      </div>
+      <div class="db-collection-body">
+        <div class="field-row"><span class="field-name">_id</span><span class="field-type">ObjectId</span><span class="field-note">Primary key (auto)</span></div>
+        <div class="field-row"><span class="field-name">name</span><span class="field-type">String</span><span class="field-note">Display name</span></div>
+        <div class="field-row"><span class="field-name">email</span><span class="field-type">String</span><span class="field-note">Unique, indexed</span></div>
+        <div class="field-row"><span class="field-name">password</span><span class="field-type">String</span><span class="field-note">BCrypt hashed</span></div>
+        <div class="field-row"><span class="field-name">roles</span><span class="field-type">List&lt;String&gt;</span><span class="field-note">e.g. ["ROLE_USER"]</span></div>
+        <div class="field-row"><span class="field-name">googleId</span><span class="field-type">String</span><span class="field-note">OAuth Google sub</span></div>
+        <div class="field-row"><span class="field-name">githubId</span><span class="field-type">String</span><span class="field-note">OAuth GitHub id</span></div>
+        <div class="field-row"><span class="field-name">twoFactorSecret</span><span class="field-type">String</span><span class="field-note">Base32 TOTP secret</span></div>
+        <div class="field-row"><span class="field-name">isTwoFactorEnabled</span><span class="field-type">boolean</span><span class="field-note">Default: false</span></div>
+        <div class="field-row"><span class="field-name">isVerified</span><span class="field-type">boolean</span><span class="field-note">Email verified</span></div>
+        <div class="field-row"><span class="field-name">isActive</span><span class="field-type">boolean</span><span class="field-note">Account active</span></div>
+        <div class="field-row"><span class="field-name">profilePicture</span><span class="field-type">String</span><span class="field-note">Avatar URL</span></div>
+        <div class="field-row"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span><span class="field-note">@CreatedDate</span></div>
+        <div class="field-row"><span class="field-name">updatedAt</span><span class="field-type">LocalDateTime</span><span class="field-note">@LastModifiedDate</span></div>
+      </div>
+    </div>
+
+    <!-- NOTES -->
+    <div class="db-collection">
+      <div class="db-collection-header" style="background:rgba(59,130,246,.1)">
+        <span>📝</span>
+        <div class="db-collection-name">notes</div>
+        <code style="margin-left:auto;font-size:10px;color:var(--muted)">@Document("notes")</code>
+      </div>
+      <div class="db-collection-body">
+        <div class="field-row"><span class="field-name">_id</span><span class="field-type">ObjectId</span><span class="field-note">Primary key</span></div>
+        <div class="field-row"><span class="field-name">title</span><span class="field-type">String</span><span class="field-note">Note title</span></div>
+        <div class="field-row"><span class="field-name">content</span><span class="field-type">String</span><span class="field-note">HTML (TipTap output)</span></div>
+        <div class="field-row"><span class="field-name">userId</span><span class="field-type">String</span><span class="field-note">Owner reference</span></div>
+        <div class="field-row"><span class="field-name">folderId</span><span class="field-type">String</span><span class="field-note">Folder reference (nullable)</span></div>
+        <div class="field-row"><span class="field-name">tags</span><span class="field-type">List&lt;String&gt;</span><span class="field-note">Tag IDs</span></div>
+        <div class="field-row"><span class="field-name">isPinned</span><span class="field-type">boolean</span><span class="field-note">Default: false</span></div>
+        <div class="field-row"><span class="field-name">isFavourite</span><span class="field-type">boolean</span><span class="field-note">Default: false</span></div>
+        <div class="field-row"><span class="field-name">isDeleted</span><span class="field-type">boolean</span><span class="field-note">Soft delete flag</span></div>
+        <div class="field-row"><span class="field-name">deletedAt</span><span class="field-type">LocalDateTime</span><span class="field-note">When deleted</span></div>
+        <div class="field-row"><span class="field-name">isLocked</span><span class="field-type">boolean</span><span class="field-note">Password protected</span></div>
+        <div class="field-row"><span class="field-name">lockPasswordHash</span><span class="field-type">String</span><span class="field-note">BCrypt hash</span></div>
+        <div class="field-row"><span class="field-name">collaborators</span><span class="field-type">List&lt;Collaborator&gt;</span><span class="field-note">Embedded array</span></div>
+        <div class="field-row"><span class="field-name">version</span><span class="field-type">int</span><span class="field-note">Increments on update</span></div>
+        <div class="field-row"><span class="field-name">viewCount</span><span class="field-type">int</span><span class="field-note">View counter</span></div>
+        <div class="field-row"><span class="field-name">wordCount</span><span class="field-type">int</span><span class="field-note">Auto-computed</span></div>
+        <div class="field-row"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span><span class="field-note">@CreatedDate</span></div>
+        <div class="field-row"><span class="field-name">updatedAt</span><span class="field-type">LocalDateTime</span><span class="field-note">@LastModifiedDate</span></div>
+      </div>
+    </div>
+
+    <!-- FOLDERS -->
+    <div class="db-collection">
+      <div class="db-collection-header" style="background:rgba(249,115,22,.08)">
+        <span>📁</span><div class="db-collection-name">folders</div>
+      </div>
+      <div class="db-collection-body">
+        <div class="field-row"><span class="field-name">_id</span><span class="field-type">ObjectId</span></div>
+        <div class="field-row"><span class="field-name">name</span><span class="field-type">String</span><span class="field-note">Folder name</span></div>
+        <div class="field-row"><span class="field-name">userId</span><span class="field-type">String</span><span class="field-note">Owner</span></div>
+        <div class="field-row"><span class="field-name">parentId</span><span class="field-type">String</span><span class="field-note">Nested folder parent</span></div>
+        <div class="field-row"><span class="field-name">children</span><span class="field-type">List&lt;String&gt;</span><span class="field-note">Child folder IDs</span></div>
+        <div class="field-row"><span class="field-name">createdAt / updatedAt</span><span class="field-type">LocalDateTime</span></div>
+      </div>
+    </div>
+
+    <!-- SESSIONS -->
+    <div class="db-collection">
+      <div class="db-collection-header" style="background:rgba(20,184,166,.08)">
+        <span>🖥️</span><div class="db-collection-name">sessions</div>
+      </div>
+      <div class="db-collection-body">
+        <div class="field-row"><span class="field-name">_id</span><span class="field-type">ObjectId</span></div>
+        <div class="field-row"><span class="field-name">userId</span><span class="field-type">String</span><span class="field-note">User reference</span></div>
+        <div class="field-row"><span class="field-name">refreshToken</span><span class="field-type">String</span><span class="field-note">Hashed token</span></div>
+        <div class="field-row"><span class="field-name">deviceInfo</span><span class="field-type">String</span><span class="field-note">User-Agent string</span></div>
+        <div class="field-row"><span class="field-name">ipAddress</span><span class="field-type">String</span></div>
+        <div class="field-row"><span class="field-name">isActive</span><span class="field-type">boolean</span></div>
+        <div class="field-row"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span></div>
+        <div class="field-row"><span class="field-name">lastActivity</span><span class="field-type">LocalDateTime</span></div>
+      </div>
+    </div>
+
+    <!-- SHARED LINKS -->
+    <div class="db-collection">
+      <div class="db-collection-header" style="background:rgba(236,72,153,.08)">
+        <span>🔗</span><div class="db-collection-name">shared_links</div>
+      </div>
+      <div class="db-collection-body">
+        <div class="field-row"><span class="field-name">_id</span><span class="field-type">ObjectId</span></div>
+        <div class="field-row"><span class="field-name">noteId</span><span class="field-type">String</span><span class="field-note">Note reference</span></div>
+        <div class="field-row"><span class="field-name">token</span><span class="field-type">String</span><span class="field-note">UUID, unique</span></div>
+        <div class="field-row"><span class="field-name">permission</span><span class="field-type">String</span><span class="field-note">VIEW or EDIT</span></div>
+        <div class="field-row"><span class="field-name">expiresAt</span><span class="field-type">LocalDateTime</span><span class="field-note">Optional expiry</span></div>
+        <div class="field-row"><span class="field-name">isActive</span><span class="field-type">boolean</span><span class="field-note">Can be revoked</span></div>
+        <div class="field-row"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span></div>
+      </div>
+    </div>
+
+    <!-- AUDIT LOGS -->
+    <div class="db-collection">
+      <div class="db-collection-header" style="background:rgba(234,179,8,.08)">
+        <span>📋</span><div class="db-collection-name">audit_logs</div>
+      </div>
+      <div class="db-collection-body">
+        <div class="field-row"><span class="field-name">_id</span><span class="field-type">ObjectId</span></div>
+        <div class="field-row"><span class="field-name">userId</span><span class="field-type">String</span></div>
+        <div class="field-row"><span class="field-name">action</span><span class="field-type">String</span><span class="field-note">e.g. NOTE_CREATE</span></div>
+        <div class="field-row"><span class="field-name">resource</span><span class="field-type">String</span><span class="field-note">Resource type</span></div>
+        <div class="field-row"><span class="field-name">resourceId</span><span class="field-type">String</span></div>
+        <div class="field-row"><span class="field-name">details</span><span class="field-type">String</span><span class="field-note">JSON details</span></div>
+        <div class="field-row"><span class="field-name">ipAddress</span><span class="field-type">String</span></div>
+        <div class="field-row"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- EMBEDDED MODELS -->
+  <div style="margin-top:20px" class="grid-2">
+    <div class="db-collection">
+      <div class="db-collection-header" style="background:rgba(108,99,255,.08)"><span>🔗</span><div class="db-collection-name">Collaborator (embedded in notes)</div></div>
+      <div class="db-collection-body">
+        <div class="field-row"><span class="field-name">userId</span><span class="field-type">String</span><span class="field-note">User reference</span></div>
+        <div class="field-row"><span class="field-name">email</span><span class="field-type">String</span><span class="field-note">Denormalised</span></div>
+        <div class="field-row"><span class="field-name">name</span><span class="field-type">String</span><span class="field-note">Denormalised</span></div>
+        <div class="field-row"><span class="field-name">permission</span><span class="field-type">String</span><span class="field-note">READ or WRITE</span></div>
+      </div>
+    </div>
+    <div class="db-collection">
+      <div class="db-collection-header" style="background:rgba(34,197,94,.08)"><span>📊</span><div class="db-collection-name">MongoDB Repository Custom Queries</div></div>
+      <div class="db-collection-body">
+        <div class="field-row"><span class="field-name" style="min-width:200px">findSharedWithUser(userId)</span><span class="field-note">{ 'collaborators.userId': ?0, 'isDeleted': false }</span></div>
+        <div class="field-row"><span class="field-name" style="min-width:200px">searchByTitleOrContent</span><span class="field-note">{ $or: [ title regex, content regex ] }</span></div>
+        <div class="field-row"><span class="field-name" style="min-width:200px">findByUserIdAndIsDeletedFalse</span><span class="field-note">Pageable, owner + not deleted</span></div>
+        <div class="field-row"><span class="field-name" style="min-width:200px">countByUserIdAndIsDeletedFalse</span><span class="field-note">Dashboard stats counter</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- 7. SECURITY -->
+<div class="container">
+<section id="security">
+  <div class="section-title"><span class="icon icon-red">🔒</span> Security Architecture</div>
+  <p class="section-subtitle">Multi-layer security: JWT stateless auth, BCrypt password hashing, TOTP 2FA, CORS policy, and session management.</p>
+
+  <div class="grid-2" style="margin-bottom:24px">
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:#f87171"></span> Authentication Flow</div>
+      <div class="flow" style="margin-top:12px">
+        <div class="flow-step">
+          <div class="flow-line"><div class="flow-num" style="background:#3b82f6">1</div><div class="flow-connector"></div></div>
+          <div class="flow-content"><h4>POST /api/auth/login</h4><p>User sends email + password. Spring Security validates via <code>UserDetailsServiceImpl.loadUserByUsername()</code>.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-line"><div class="flow-num" style="background:#3b82f6">2</div><div class="flow-connector"></div></div>
+          <div class="flow-content"><h4>BCrypt.matches()</h4><p>PasswordEncoder compares submitted password with stored hash.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-line"><div class="flow-num" style="background:#3b82f6">3</div><div class="flow-connector"></div></div>
+          <div class="flow-content"><h4>2FA check (if enabled)</h4><p>TOTP code validated against stored secret using RFC 6238.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-line"><div class="flow-num" style="background:#3b82f6">4</div><div class="flow-connector"></div></div>
+          <div class="flow-content"><h4>Token generation</h4><p><code>JwtUtils.generateAccessToken()</code> + <code>generateRefreshToken()</code>. Session stored in MongoDB.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-line"><div class="flow-num" style="background:#3b82f6">5</div></div>
+          <div class="flow-content"><h4>Response</h4><p>Returns <code>{ accessToken, refreshToken, user }</code>. Frontend stores tokens in localStorage.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:#a5b4fc"></span> JWT Request Validation</div>
+      <div class="flow" style="margin-top:12px">
+        <div class="flow-step">
+          <div class="flow-line"><div class="flow-num" style="background:var(--primary)">1</div><div class="flow-connector"></div></div>
+          <div class="flow-content"><h4>JwtAuthFilter.doFilterInternal()</h4><p>Extracts Bearer token from Authorization header on every request.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-line"><div class="flow-num" style="background:var(--primary)">2</div><div class="flow-connector"></div></div>
+          <div class="flow-content"><h4>JwtUtils.validateToken()</h4><p>Verifies HMAC-SHA256 signature, checks expiry, extracts subject (email).</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-line"><div class="flow-num" style="background:var(--primary)">3</div><div class="flow-connector"></div></div>
+          <div class="flow-content"><h4>UserDetailsServiceImpl.loadUserByUsername(email)</h4><p>Fetches user from MongoDB to confirm account is still active.</p></div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-line"><div class="flow-num" style="background:var(--primary)">4</div></div>
+          <div class="flow-content"><h4>SecurityContextHolder.setAuthentication()</h4><p>Controller calls <code>authentication.getName()</code> → gets email → service resolves to userId.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card-sm">
+      <div style="font-weight:700;font-size:13px;margin-bottom:10px;color:#4ade80">✅ CORS Policy</div>
+      <div style="font-size:12px;color:var(--muted);line-height:2">
+        Allowed Origin: <code>http://localhost:3000</code><br>
+        Methods: GET, POST, PUT, DELETE, OPTIONS<br>
+        Headers: Authorization, Content-Type<br>
+        Credentials: true<br>
+        Max Age: 3600s<br>
+        Configured in <code>CorsConfig.java</code>
+      </div>
+    </div>
+    <div class="card-sm">
+      <div style="font-weight:700;font-size:13px;margin-bottom:10px;color:#facc15">🔐 Password Security</div>
+      <div style="font-size:12px;color:var(--muted);line-height:2">
+        Algorithm: BCrypt (strength 10)<br>
+        Reset: 6-digit OTP via email<br>
+        OTP expiry: 15 minutes<br>
+        Lock password: BCrypt hashed<br>
+        Unlock: BCrypt.matches() check<br>
+        Configured in <code>SecurityConfig.java</code>
+      </div>
+    </div>
+    <div class="card-sm">
+      <div style="font-weight:700;font-size:13px;margin-bottom:10px;color:#f472b6">📱 2FA (TOTP)</div>
+      <div style="font-size:12px;color:var(--muted);line-height:2">
+        Standard: RFC 6238 (TOTP)<br>
+        App: Google Authenticator<br>
+        Secret: Base32 encoded<br>
+        Window: ±1 time step<br>
+        QR code: otpauth:// URI<br>
+        Setup in <code>AuthService.java</code>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- 8. FLOWS -->
+<div class="container">
+<section id="flows">
+  <div class="section-title"><span class="icon icon-teal">🔄</span> Request Flow Diagrams</div>
+  <p class="section-subtitle">Step-by-step flows for the most important operations in the application.</p>
+
+  <div class="grid-2" style="margin-bottom:24px">
+
+    <!-- CREATE NOTE FLOW -->
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:#4ade80"></span> Create + Auto-Save Note Flow</div>
+      <div class="flow" style="margin-top:12px;font-size:12px">
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#6b7280">FE</div><div class="flow-connector"></div></div><div class="flow-content"><h4>User types in NoteEditorPage</h4><p>Title/content change → <code>scheduleAutoSave()</code> sets 2s debounce timer.</p></div></div>
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#6b7280">FE</div><div class="flow-connector"></div></div><div class="flow-content"><h4>Timer fires → saveNote()</h4><p>If new note: <code>POST /api/notes</code>. If existing: <code>PUT /api/notes/{id}</code>.</p></div></div>
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#fb923c">BE</div><div class="flow-connector"></div></div><div class="flow-content"><h4>NoteController.createNote()</h4><p>Calls <code>noteService.createNote(request, email)</code>. resolveUserId(email) → userId.</p></div></div>
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#fb923c">BE</div><div class="flow-connector"></div></div><div class="flow-content"><h4>NoteService builds Note model</h4><p>Sets wordCount (strip HTML tags + split), version=1, isDeleted=false.</p></div></div>
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#4ade80">DB</div><div class="flow-connector"></div></div><div class="flow-content"><h4>noteRepository.save(note)</h4><p>MongoDB inserts document. @CreatedDate / @LastModifiedDate auto-set.</p></div></div>
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#6b7280">FE</div></div><div class="flow-content"><h4>URL updates to /notes/{newId}</h4><p>navigate() with replace:true. Saved indicator turns green ✓.</p></div></div>
+      </div>
+    </div>
+
+    <!-- COLLABORATION FLOW -->
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:#a5b4fc"></span> Collaboration Invite + Access Flow</div>
+      <div class="flow" style="margin-top:12px;font-size:12px">
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#6b7280">FE</div><div class="flow-connector"></div></div><div class="flow-content"><h4>Owner opens CollaborateModal</h4><p>Enters <code>user@email.com</code> + READ/WRITE permission, clicks Invite.</p></div></div>
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#fb923c">BE</div><div class="flow-connector"></div></div><div class="flow-content"><h4>POST /api/collaborate/{noteId}/invite</h4><p><code>CollaborateService.invite()</code> → finds invitee by email → checks not self-invite.</p></div></div>
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#4ade80">DB</div><div class="flow-connector"></div></div><div class="flow-content"><h4>Upserts collaborator in note.collaborators[]</h4><p>If already collaborator → updates permission. Otherwise appends new Collaborator.</p></div></div>
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#6b7280">FE</div><div class="flow-connector"></div></div><div class="flow-content"><h4>Invited user logs in → visits /shared-with-me</h4><p><code>GET /api/notes/shared-with-me</code> → query: <code>{ 'collaborators.userId': userId }</code></p></div></div>
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#fb923c">BE</div><div class="flow-connector"></div></div><div class="flow-content"><h4>Open note → findNoteWithAccess()</h4><p>Checks owner OR collaborator with sufficient permission (READ/WRITE).</p></div></div>
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#6b7280">FE</div></div><div class="flow-content"><h4>Editor editable based on permission</h4><p>WRITE: full editing. READ: locked editor + blue "read-only" banner.</p></div></div>
+      </div>
+    </div>
+
+    <!-- SHARE LINK FLOW -->
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:#f472b6"></span> Share Link Flow</div>
+      <div class="flow" style="margin-top:12px;font-size:12px">
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#6b7280">FE</div><div class="flow-connector"></div></div><div class="flow-content"><h4>Owner clicks Share button</h4><p><code>POST /api/share/{noteId}</code> with body <code>{ permission: "VIEW" }</code></p></div></div>
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#fb923c">BE</div><div class="flow-connector"></div></div><div class="flow-content"><h4>ShareService.createShareLink()</h4><p>Generates UUID token. Stores SharedLink document. Returns <code>http://localhost:3000/share/{token}</code></p></div></div>
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#6b7280">FE</div><div class="flow-connector"></div></div><div class="flow-content"><h4>Modal shows copyable URL</h4><p>Owner copies and sends to anyone. No login required to view.</p></div></div>
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#6b7280">FE</div><div class="flow-connector"></div></div><div class="flow-content"><h4>Recipient opens link in browser</h4><p>Route <code>/share/:token</code> → <code>SharedNotePage</code> → <code>GET /api/share/public/{token}</code></p></div></div>
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#fb923c">BE</div></div><div class="flow-content"><h4>ShareService.getSharedNote(token)</h4><p>Finds SharedLink → validates isActive → returns NoteResponse. Endpoint is unauthenticated.</p></div></div>
+      </div>
+    </div>
+
+    <!-- SEARCH FLOW -->
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:#2dd4bf"></span> Search Flow</div>
+      <div class="flow" style="margin-top:12px;font-size:12px">
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#6b7280">FE</div><div class="flow-connector"></div></div><div class="flow-content"><h4>User types in SearchPage</h4><p><code>useDebounce(query, 400ms)</code> prevents firing on every keystroke.</p></div></div>
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#fb923c">BE</div><div class="flow-connector"></div></div><div class="flow-content"><h4>GET /api/notes?search={query} or /search?q={q}</h4><p>NoteService.searchNotes() → <code>NoteRepository.searchByTitleOrContent(userId, query)</code></p></div></div>
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#4ade80">DB</div><div class="flow-connector"></div></div><div class="flow-content"><h4>MongoDB regex query</h4><p><code>{ $or: [{ title: { $regex: query, $options: 'i' } }, { content: { $regex: query, $options: 'i' } }] }</code></p></div></div>
+        <div class="flow-step"><div class="flow-line"><div class="flow-num" style="font-size:10px;background:#6b7280">FE</div></div><div class="flow-content"><h4>Results with highlights</h4><p><code>highlightText()</code> wraps matches in <code>&lt;mark&gt;</code> tags. Dark/light aware colors.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- 9. FEATURES -->
+<div class="container">
+<section id="features">
+  <div class="section-title"><span class="icon icon-yellow">✨</span> Feature Reference</div>
+  <p class="section-subtitle">Complete list of all implemented features with their technical implementation details.</p>
+
+  <div class="grid-3">
+    <div class="feature-card">
+      <div class="feature-icon">✏️</div>
+      <div class="feature-title">Rich Text Editor</div>
+      <div class="feature-desc">TipTap v2 with extensions: Bold, Italic, Strike, Code, Heading (H1-H3), BulletList, OrderedList, Blockquote, Link, Horizontal Rule. Floating toolbar. Content stored as HTML.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💾</div>
+      <div class="feature-title">Auto-Save</div>
+      <div class="feature-desc">2-second debounce on title and content changes. Saves indicator: Unsaved → Saving… → ✓ Saved. New note creates on first save and updates URL with replace:true.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📁</div>
+      <div class="feature-title">Folder Organization</div>
+      <div class="feature-desc">Create, rename, delete folders from sidebar. Notes filtered by folder. Nested folder support via parentId. Note count displayed per folder.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔍</div>
+      <div class="feature-title">Full-Text Search</div>
+      <div class="feature-desc">MongoDB regex search across title and content. Debounced input (400ms). Match highlighting with <code>&lt;mark&gt;</code> tags. Separate /search page with result cards.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📌</div>
+      <div class="feature-title">Pin & Favourite</div>
+      <div class="feature-desc">Toggle pin/favourite on any note. Pinned notes float to top. Dedicated /favourites page. Dashboard filter buttons for pinned/favourite notes.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🗑️</div>
+      <div class="feature-title">Trash & Restore</div>
+      <div class="feature-desc">Soft delete moves notes to trash (isDeleted=true, deletedAt recorded). Restore clears isDeleted. Permanent delete removes from MongoDB. Empty Trash clears all at once.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <div class="feature-title">Note Lock</div>
+      <div class="feature-desc">Set a password to lock a note. Password stored as BCrypt hash. Locked note shows read-only editor (TipTap editable=false). Unlock requires matching password.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔗</div>
+      <div class="feature-title">Public Share Links</div>
+      <div class="feature-desc">Generate UUID share token. Public URL: /share/{token}. No auth required. SharedNotePage renders note in read-only TipTap. Link can be revoked (isActive=false).</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">👥</div>
+      <div class="feature-title">Real Collaboration</div>
+      <div class="feature-desc">Invite by email with READ or WRITE permission. Collaborators appear in /shared-with-me. READ: read-only view with banner. WRITE: full editing. Owner can remove collaborators.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🤖</div>
+      <div class="feature-title">AI Assistant</div>
+      <div class="feature-desc">Side panel with 4 features: Summarize content, Grammar correction, Rewrite with custom instruction, Suggest tags. Endpoints stubbed — ready for OpenAI/Anthropic integration.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📤</div>
+      <div class="feature-title">Export Notes</div>
+      <div class="feature-desc">Export as Markdown (.md) or plain text (.txt). Server strips HTML tags for text export. TipTap HTML converted to Markdown format. Returned as file download (Content-Disposition header).</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌓</div>
+      <div class="feature-title">Dark / Light Theme</div>
+      <div class="feature-desc">Tailwind darkMode: 'class'. Toggle adds/removes .dark on &lt;html&gt;. ThemeContext persists to localStorage. Custom CSS overrides in global.css for components using base dark utilities.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔐</div>
+      <div class="feature-title">Two-Factor Auth (2FA)</div>
+      <div class="feature-desc">TOTP-based (RFC 6238). Compatible with Google Authenticator. Setup: generate secret + QR code. Verification: 6-digit code on login. Stored as Base32 secret in user document.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📧</div>
+      <div class="feature-title">Password Reset</div>
+      <div class="feature-desc">Forgot password sends 6-digit OTP via SMTP email. OTP stored in MongoDB with 15-minute expiry. Reset form: email + OTP + new password. BCrypt encodes new password.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🖥️</div>
+      <div class="feature-title">Session Management</div>
+      <div class="feature-desc">Active sessions stored in MongoDB with device info, IP, last activity. View all sessions in Settings. Revoke individual sessions or log out all devices. JWT refresh validates against session record.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📋</div>
+      <div class="feature-title">Audit Logs</div>
+      <div class="feature-desc">All important actions logged: note CRUD, login/logout, password changes, collaborator changes. Viewable in Settings → Security tab. Includes action, resource, IP address, timestamp.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📄</div>
+      <div class="feature-title">Swagger / OpenAPI</div>
+      <div class="feature-desc">Springdoc OpenAPI 2.3.0. All endpoints documented with @Operation and @Tag annotations. Accessible at http://localhost:8081/swagger-ui.html. Supports JWT Bearer token testing.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔢</div>
+      <div class="feature-title">Note Metadata</div>
+      <div class="feature-desc">Auto word count (strips HTML, splits on whitespace). View count incremented on each GET. Version number increments on each update. Created/updated timestamps via Spring Data auditing.</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- 10. TECH STACK -->
+<div class="container">
+<section id="techstack">
+  <div class="section-title"><span class="icon icon-purple">🛠️</span> Tech Stack</div>
+  <p class="section-subtitle">Complete list of all libraries, frameworks, and tools used in the application.</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:16px"><span class="dot" style="background:#fb923c"></span> Backend Dependencies (Maven)</div>
+      <div class="tech-item"><span class="tech-icon">🍃</span><span class="tech-name">Spring Boot</span><span class="tech-ver">3.2.0</span></div>
+      <div class="tech-item"><span class="tech-icon">🔒</span><span class="tech-name">Spring Security</span><span class="tech-ver">6.x (included)</span></div>
+      <div class="tech-item"><span class="tech-icon">🗄️</span><span class="tech-name">Spring Data MongoDB</span><span class="tech-ver">4.x (included)</span></div>
+      <div class="tech-item"><span class="tech-icon">📧</span><span class="tech-name">Spring Mail</span><span class="tech-ver">included</span></div>
+      <div class="tech-item"><span class="tech-icon">✅</span><span class="tech-name">Spring Validation</span><span class="tech-ver">Jakarta Validation</span></div>
+      <div class="tech-item"><span class="tech-icon">🔑</span><span class="tech-name">JJWT (JWT library)</span><span class="tech-ver">0.12.3</span></div>
+      <div class="tech-item"><span class="tech-icon">📖</span><span class="tech-name">Springdoc OpenAPI (Swagger)</span><span class="tech-ver">2.3.0</span></div>
+      <div class="tech-item"><span class="tech-icon">🦾</span><span class="tech-name">Lombok</span><span class="tech-ver">latest</span></div>
+      <div class="tech-item"><span class="tech-icon">☕</span><span class="tech-name">Java</span><span class="tech-ver">17 LTS (OpenJDK)</span></div>
+      <div class="tech-item"><span class="tech-icon">📦</span><span class="tech-name">Maven</span><span class="tech-ver">3.x build tool</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:16px"><span class="dot" style="background:#60a5fa"></span> Frontend Dependencies (npm)</div>
+      <div class="tech-item"><span class="tech-icon">⚛️</span><span class="tech-name">React</span><span class="tech-ver">18.2.0</span></div>
+      <div class="tech-item"><span class="tech-icon">🛣️</span><span class="tech-name">React Router DOM</span><span class="tech-ver">6.22.0</span></div>
+      <div class="tech-item"><span class="tech-icon">✍️</span><span class="tech-name">TipTap Editor</span><span class="tech-ver">2.2.4</span></div>
+      <div class="tech-item"><span class="tech-icon">🌊</span><span class="tech-name">Tailwind CSS</span><span class="tech-ver">3.4.1</span></div>
+      <div class="tech-item"><span class="tech-icon">🎬</span><span class="tech-name">Framer Motion</span><span class="tech-ver">11.0.3</span></div>
+      <div class="tech-item"><span class="tech-icon">📡</span><span class="tech-name">Axios</span><span class="tech-ver">1.6.7</span></div>
+      <div class="tech-item"><span class="tech-icon">🔄</span><span class="tech-name">React Query (TanStack)</span><span class="tech-ver">5.17.19</span></div>
+      <div class="tech-item"><span class="tech-icon">🔔</span><span class="tech-name">React Hot Toast</span><span class="tech-ver">2.4.1</span></div>
+      <div class="tech-item"><span class="tech-icon">📅</span><span class="tech-name">date-fns</span><span class="tech-ver">3.3.1</span></div>
+      <div class="tech-item"><span class="tech-icon">🎨</span><span class="tech-name">React Icons</span><span class="tech-ver">5.0.1 (Feather Icons)</span></div>
+      <div class="tech-item"><span class="tech-icon">🔐</span><span class="tech-name">crypto-js</span><span class="tech-ver">4.2.0</span></div>
+      <div class="tech-item"><span class="tech-icon">📄</span><span class="tech-name">jsPDF + html2canvas</span><span class="tech-ver">2.5.1 / 1.4.1</span></div>
+    </div>
+  </div>
+
+  <!-- QUICK REFERENCE -->
+  <div class="card" style="margin-top:24px">
+    <div class="card-title"><span class="dot" style="background:#2dd4bf"></span> Quick Reference — Local Development</div>
+    <div class="grid-2" style="margin-top:12px">
+      <div>
+        <div style="font-weight:600;font-size:13px;margin-bottom:8px;color:#fb923c">🖥️ Start Backend</div>
+        <div class="code-block" style="font-size:11px">cd /Users/a91386/NoteVerse/backend
+
+# Run (uses port 8081)
+JAVA_HOME=/opt/homebrew/opt/openjdk@17 \
+  mvn spring-boot:run
+
+# API Docs
+open http://localhost:8081/swagger-ui.html
+
+# Health check
+curl http://localhost:8081/api/auth/login \
+  -d '{"email":"x","password":"x"}'</div>
+      </div>
+      <div>
+        <div style="font-weight:600;font-size:13px;margin-bottom:8px;color:#60a5fa">🌐 Start Frontend</div>
+        <div class="code-block" style="font-size:11px">cd /Users/a91386/NoteVerse/frontend
+
+# Install (first time only)
+npm install
+
+# Start dev server (port 3000)
+npm start
+
+# Environment (already created)
+cat .env
+# REACT_APP_API_URL=http://localhost:8081/api
+
+# Open browser
+open http://localhost:3000</div>
+      </div>
+    </div>
+  </div>
+
+</section>
+</div>
+
+<!-- FOOTER -->
+<div style="border-top:1px solid var(--border);padding:32px;text-align:center;color:var(--muted);font-size:13px;margin-top:40px">
+  <div style="font-size:20px;margin-bottom:8px">✏️ <strong style="color:var(--primary-light)">NoteVerse</strong></div>
+  <div>Full-Stack SaaS Note-Taking Application · Spring Boot 3.2 + React 18 + MongoDB Atlas</div>
+  <div style="margin-top:8px;font-size:12px">Architecture Documentation · Generated May 2026</div>
+</div>
+
+</body>
+</html>
