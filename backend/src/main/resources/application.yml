@@ -3,7 +3,7 @@ spring:
     name: noteverse-backend
   data:
     mongodb:
-      uri: ${MONGODB_URI:mongodb+srv://NoteVerse_db_user:DQVTcF9Rmfl27KC3@noteverse.sdwhakn.mongodb.net/?appName=NoteVerse}
+      uri: ${MONGODB_URI}
       database: noteverse
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
@@ -16,33 +16,20 @@ spring:
           auth: true
           starttls:
             enable: true
-  # OAuth2 — uncomment and set credentials when ready
-  # security:
-  #   oauth2:
-  #     client:
-  #       registration:
-  #         google:
-  #           client-id: ${GOOGLE_CLIENT_ID:}
-  #           client-secret: ${GOOGLE_CLIENT_SECRET:}
-  #           scope: profile, email
-  #         github:
-  #           client-id: ${GITHUB_CLIENT_ID:}
-  #           client-secret: ${GITHUB_CLIENT_SECRET:}
-  #           scope: user:email
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration
 
 server:
-  port: ${PORT:8081}
+  port: ${PORT:8080}
 
 app:
   jwt:
-    secret: ${JWT_SECRET:noteverse-super-secret-key-change-in-production-min-256-bits}
-    access-token-expiry: ${JWT_ACCESS_EXPIRY:900000}    # 15 min default, 86400000 for dev
-    refresh-token-expiry: 604800000  # 7 days in ms
-  frontend-url: ${FRONTEND_URL:http://localhost:3000}
+    secret: ${JWT_SECRET}
+    access-token-expiry: ${JWT_ACCESS_EXPIRY:900000}
+    refresh-token-expiry: ${JWT_REFRESH_EXPIRY:604800000}
+  frontend-url: ${FRONTEND_URL}
   cors:
-    allowed-origins: ${FRONTEND_URL:http://localhost:3000}
+    allowed-origins: ${FRONTEND_URL}
 
 springdoc:
   api-docs:

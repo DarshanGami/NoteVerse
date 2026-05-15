@@ -1,11 +1,15 @@
 # ─── Backend ────────────────────────────────────────────
 backend/target/
-backend/.mvn/wrapper/maven-wrapper.jar
 backend/*.log
 backend/logs/
 *.class
 *.jar
 *.war
+
+# Local dev secrets — NEVER commit these
+backend/src/main/resources/application-local.yml
+backend/src/main/resources/application-prod.yml
+backend/src/main/resources/application-secrets.yml
 
 # ─── Frontend ───────────────────────────────────────────
 frontend/node_modules/
@@ -13,8 +17,8 @@ frontend/build/
 frontend/.env
 frontend/.env.local
 frontend/.env.production
+frontend/.env.*.local
 frontend/npm-debug.log*
-frontend/yarn-error.log
 
 # ─── IDE / OS ───────────────────────────────────────────
 .idea/
@@ -22,8 +26,3 @@ frontend/yarn-error.log
 .vscode/
 .DS_Store
 Thumbs.db
-
-# ─── Secrets (never commit) ─────────────────────────────
-*.env
-application-prod.yml
-application-secrets.yml
