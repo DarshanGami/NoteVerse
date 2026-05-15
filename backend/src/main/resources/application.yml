@@ -6,18 +6,17 @@ spring:
       uri: ${MONGODB_URI}
       database: noteverse
   mail:
-    host: ${MAIL_HOST:smtp.gmail.com}
+    host: ${MAIL_HOST:}
     port: ${MAIL_PORT:587}
     username: ${MAIL_USERNAME:}
     password: ${MAIL_PASSWORD:}
+    test-connection: false
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration
 
 server:
   port: ${PORT:8080}

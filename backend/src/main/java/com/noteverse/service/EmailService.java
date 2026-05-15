@@ -1,7 +1,7 @@
 package com.noteverse.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -12,11 +12,11 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+    @Autowired(required = false)
+    private JavaMailSender mailSender;
 
     @Value("${spring.mail.username:noreply@noteverse.app}")
     private String fromEmail;
@@ -25,6 +25,7 @@ public class EmailService {
     private String frontendUrl;
 
     public void sendPasswordResetEmail(String toEmail, String userName, String otp) {
+        if (mailSender == null) { log.warn("Mail not configured — skipping password reset email to {}", toEmail); return; }
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -63,6 +64,7 @@ public class EmailService {
     }
 
     public void sendWelcomeEmail(String toEmail, String userName) {
+        if (mailSender == null) { log.warn("Mail not configured — skipping welcome email to {}", toEmail); return; }
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromEmail);
@@ -80,6 +82,7 @@ public class EmailService {
     }
 
     public void sendShareNotificationEmail(String toEmail, String senderName, String noteTitle, String shareUrl) {
+        if (mailSender == null) { log.warn("Mail not configured — skipping share notification email to {}", toEmail); return; }
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromEmail);
