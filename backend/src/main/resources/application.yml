@@ -3,7 +3,7 @@ spring:
     name: noteverse-backend
   data:
     mongodb:
-      uri: mongodb+srv://NoteVerse_db_user:DQVTcF9Rmfl27KC3@noteverse.sdwhakn.mongodb.net/?appName=NoteVerse
+      uri: ${MONGODB_URI:mongodb+srv://NoteVerse_db_user:DQVTcF9Rmfl27KC3@noteverse.sdwhakn.mongodb.net/?appName=NoteVerse}
       database: noteverse
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
@@ -33,12 +33,12 @@ spring:
     exclude: org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration
 
 server:
-  port: 8081
+  port: ${PORT:8081}
 
 app:
   jwt:
     secret: ${JWT_SECRET:noteverse-super-secret-key-change-in-production-min-256-bits}
-    access-token-expiry: 86400000    # 24 hours in ms (15 min in prod)
+    access-token-expiry: ${JWT_ACCESS_EXPIRY:900000}    # 15 min default, 86400000 for dev
     refresh-token-expiry: 604800000  # 7 days in ms
   frontend-url: ${FRONTEND_URL:http://localhost:3000}
   cors:
