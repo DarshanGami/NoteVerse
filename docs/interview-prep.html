@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NoteVerse – Interview Preparation Guide</title>
+<style>
+  :root {
+    --bg: #0f0f1a;
+    --card: #1a1a2e;
+    --card2: #16213e;
+    --border: #0f3460;
+    --purple: #6c63ff;
+    --purple-light: #a78bfa;
+    --blue: #3b82f6;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --code-bg: #0d1117;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.7; }
+
+  /* Header */
+  .hero { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 60px 24px; text-align: center; border-bottom: 1px solid var(--border); }
+  .hero h1 { font-size: 2.8rem; font-weight: 800; background: linear-gradient(135deg, #6c63ff, #a78bfa, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; }
+  .hero p { color: var(--muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto 24px; }
+  .stats { display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat-num { font-size: 2rem; font-weight: 700; color: var(--purple-light); }
+  .stat-label { color: var(--muted); font-size: 0.85rem; }
+
+  /* Search */
+  .search-bar { max-width: 600px; margin: 32px auto; padding: 0 24px; }
+  .search-bar input { width: 100%; padding: 14px 20px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 1rem; outline: none; transition: border-color 0.2s; }
+  .search-bar input:focus { border-color: var(--purple); }
+
+  /* Layout */
+  .container { max-width: 1000px; margin: 0 auto; padding: 24px; }
+
+  /* Section header */
+  .section-header { display: flex; align-items: center; gap: 12px; margin: 48px 0 20px; padding: 16px 20px; border-radius: 12px; border-left: 4px solid; }
+  .section-header.basic { background: rgba(16,185,129,0.1); border-color: var(--green); }
+  .section-header.intermediate { background: rgba(59,130,246,0.1); border-color: var(--blue); }
+  .section-header.advanced { background: rgba(239,68,68,0.1); border-color: var(--red); }
+  .section-header.system { background: rgba(108,99,255,0.1); border-color: var(--purple); }
+  .section-icon { font-size: 1.8rem; }
+  .section-title { font-size: 1.4rem; font-weight: 700; }
+  .section-subtitle { color: var(--muted); font-size: 0.9rem; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+  .badge.basic { background: rgba(16,185,129,0.2); color: var(--green); }
+  .badge.intermediate { background: rgba(59,130,246,0.2); color: var(--blue); }
+  .badge.advanced { background: rgba(239,68,68,0.2); color: var(--red); }
+  .badge.system { background: rgba(108,99,255,0.2); color: var(--purple-light); }
+
+  /* Q&A Cards */
+  .qa-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: hidden; transition: border-color 0.2s; }
+  .qa-card:hover { border-color: var(--purple); }
+  .qa-question { padding: 20px 24px; cursor: pointer; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+  .qa-question:hover { background: rgba(108,99,255,0.05); }
+  .q-num { color: var(--purple); font-weight: 700; font-size: 0.9rem; min-width: 36px; }
+  .q-text { font-weight: 600; font-size: 1rem; flex: 1; }
+  .q-arrow { color: var(--muted); font-size: 1.2rem; transition: transform 0.3s; min-width: 20px; text-align: right; }
+  .qa-card.open .q-arrow { transform: rotate(180deg); }
+  .qa-answer { display: none; padding: 0 24px 24px; border-top: 1px solid var(--border); }
+  .qa-card.open .qa-answer { display: block; }
+  .qa-answer p { color: var(--muted); margin-top: 16px; margin-bottom: 12px; }
+  .qa-answer ul, .qa-answer ol { color: var(--muted); padding-left: 20px; margin: 8px 0 12px; }
+  .qa-answer li { margin-bottom: 6px; }
+  .qa-answer strong { color: var(--text); }
+  .qa-answer h4 { color: var(--purple-light); margin: 16px 0 8px; font-size: 0.95rem; }
+
+  /* Code */
+  pre { background: var(--code-bg); border: 1px solid #30363d; border-radius: 8px; padding: 16px; margin: 12px 0; overflow-x: auto; font-size: 0.85rem; line-height: 1.6; }
+  code { font-family: 'Fira Code', 'Cascadia Code', monospace; }
+  .inline-code { background: var(--code-bg); border: 1px solid #30363d; border-radius: 4px; padding: 2px 6px; font-size: 0.85em; color: #e06c75; font-family: monospace; }
+
+  /* Highlight boxes */
+  .tip { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+  .tip::before { content: "💡 Tip: "; font-weight: 700; color: var(--green); }
+  .warning { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 8px; padding: 12px 16px; margin: 12px 0; color: var(--muted); }
+  .warning::before { content: "⚠️ Note: "; font-weight: 700; color: var(--yellow); }
+
+  /* Flow diagram */
+  .flow { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .flow-box { background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; font-size: 0.85rem; color: var(--text); }
+  .flow-arrow { color: var(--purple); font-weight: 700; }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.9rem; }
+  th { background: var(--card2); color: var(--purple-light); padding: 10px 14px; text-align: left; font-weight: 600; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--muted); }
+  tr:hover td { background: rgba(108,99,255,0.05); }
+
+  /* TOC */
+  .toc { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 32px; }
+  .toc h3 { color: var(--purple-light); margin-bottom: 16px; }
+  .toc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; }
+  .toc a { color: var(--muted); text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 0.9rem; display: block; transition: all 0.2s; }
+  .toc a:hover { background: rgba(108,99,255,0.1); color: var(--purple-light); }
+
+  /* Footer */
+  footer { text-align: center; padding: 40px; color: var(--muted); border-top: 1px solid var(--border); margin-top: 60px; }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <h1>📝 NoteVerse Interview Prep</h1>
+  <p>Complete interview preparation guide — from basic concepts to advanced architecture questions. All answers based on the actual NoteVerse codebase.</p>
+  <div class="stats">
+    <div class="stat"><div class="stat-num">60+</div><div class="stat-label">Questions</div></div>
+    <div class="stat"><div class="stat-num">4</div><div class="stat-label">Difficulty Levels</div></div>
+    <div class="stat"><div class="stat-num">10+</div><div class="stat-label">Topics Covered</div></div>
+  </div>
+</div>
+
+<!-- Search -->
+<div class="search-bar">
+  <input type="text" id="search" placeholder="🔍 Search questions... (e.g. JWT, CORS, MongoDB)" oninput="filterQA()">
+</div>
+
+<div class="container">
+
+  <!-- TOC -->
+  <div class="toc">
+    <h3>📚 Topics Covered</h3>
+    <div class="toc-grid">
+      <a href="#basic">🟢 Basic — Project Overview</a>
+      <a href="#frontend">🔵 Frontend — React & UI</a>
+      <a href="#backend">🔵 Backend — Spring Boot</a>
+      <a href="#security">🔴 Security — JWT & Auth</a>
+      <a href="#database">🔴 Database — MongoDB</a>
+      <a href="#advanced">🔴 Advanced — Architecture</a>
+      <a href="#devops">🟣 DevOps — Docker & CI/CD</a>
+      <a href="#behavioral">🟣 Behavioral — Project Story</a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 1: BASIC
+  ══════════════════════════════════════════════════ -->
+  <div class="section-header basic" id="basic">
+    <div class="section-icon">🟢</div>
+    <div>
+      <div class="section-title">Basic Level — Project Overview</div>
+      <div class="section-subtitle">General questions about the project, tech stack, and purpose</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q1">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q1</span>
+      <span class="q-text">What is NoteVerse? Explain the project in simple words.</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p><strong>NoteVerse is a full-stack notes web application</strong> — think of it like a personal Notion or Google Keep, but built from scratch with modern technologies.</p>
+      <p>It allows users to:</p>
+      <ul>
+        <li>Create, edit, and organize notes using a rich text editor</li>
+        <li>Organize notes into folders and tag them</li>
+        <li>Share notes with others via a public link</li>
+        <li>Collaborate with teammates (give them read or write access)</li>
+        <li>Export notes as PDF, Markdown, or plain text</li>
+        <li>Search through all their notes instantly</li>
+        <li>Use it offline (PWA support)</li>
+      </ul>
+      <p>The project is split into two parts: a <strong>React frontend</strong> (what the user sees) and a <strong>Spring Boot backend</strong> (the server that stores and manages data).</p>
+      <div class="tip">When answering this, mention it's a SaaS-style application — it has user accounts, authentication, and multi-user support.</div>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q2">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q2</span>
+      <span class="q-text">What is the tech stack used in NoteVerse?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <table>
+        <tr><th>Layer</th><th>Technology</th><th>Why chosen</th></tr>
+        <tr><td>Frontend</td><td>React 18</td><td>Component-based, fast rendering, large ecosystem</td></tr>
+        <tr><td>Styling</td><td>Tailwind CSS</td><td>Utility-first, easy dark mode, no custom CSS files needed</td></tr>
+        <tr><td>Text Editor</td><td>TipTap</td><td>Rich text editor built on ProseMirror, very customizable</td></tr>
+        <tr><td>Backend</td><td>Spring Boot 3.2 (Java 17)</td><td>Production-ready, excellent security, huge ecosystem</td></tr>
+        <tr><td>Database</td><td>MongoDB Atlas</td><td>Flexible schema, good for nested documents like notes</td></tr>
+        <tr><td>Auth</td><td>JWT (jjwt 0.12)</td><td>Stateless, scalable, works well with REST APIs</td></tr>
+        <tr><td>API Docs</td><td>Swagger (SpringDoc)</td><td>Auto-generates interactive API documentation</td></tr>
+        <tr><td>Containerization</td><td>Docker</td><td>Consistent deployment across environments</td></tr>
+        <tr><td>Hosting</td><td>Render</td><td>Easy Docker + Static site deployment, free tier available</td></tr>
+        <tr><td>CI/CD</td><td>GitHub Actions</td><td>Automated build and deploy on every push</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q3">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q3</span>
+      <span class="q-text">What is a REST API? How does NoteVerse use it?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p><strong>REST API</strong> (Representational State Transfer) is a way for the frontend and backend to talk to each other over HTTP using standard methods.</p>
+      <p>The 4 main HTTP methods and how NoteVerse uses them:</p>
+      <table>
+        <tr><th>Method</th><th>Action</th><th>Example in NoteVerse</th></tr>
+        <tr><td>GET</td><td>Read data</td><td>GET /api/notes → get all notes</td></tr>
+        <tr><td>POST</td><td>Create data</td><td>POST /api/auth/login → login user</td></tr>
+        <tr><td>PUT</td><td>Update data</td><td>PUT /api/notes/{id} → update a note</td></tr>
+        <tr><td>DELETE</td><td>Delete data</td><td>DELETE /api/notes/{id} → delete a note</td></tr>
+      </table>
+      <p>Every API response in NoteVerse follows a consistent format:</p>
+      <pre><code>{
+  "success": true,
+  "message": "Note created successfully",
+  "data": { "id": "...", "title": "My Note", ... }
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q4">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q4</span>
+      <span class="q-text">What features does NoteVerse have? List at least 10.</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <ol>
+        <li><strong>User Registration & Login</strong> — Email/password with JWT tokens</li>
+        <li><strong>Rich Text Editor</strong> — Bold, italic, headings, lists, code blocks (TipTap)</li>
+        <li><strong>Folders</strong> — Organize notes into nested folder structure</li>
+        <li><strong>Tags</strong> — Label notes with colored tags for quick filtering</li>
+        <li><strong>Pin & Favourite</strong> — Mark important notes for quick access</li>
+        <li><strong>Trash / Soft Delete</strong> — Deleted notes go to trash and can be restored</li>
+        <li><strong>Full-Text Search</strong> — Search across all note content</li>
+        <li><strong>Share Links</strong> — Generate public links with VIEW or EDIT permission and expiry</li>
+        <li><strong>Collaboration</strong> — Invite other users by email with READ/WRITE access</li>
+        <li><strong>Export</strong> — Download notes as PDF, Markdown, or plain text</li>
+        <li><strong>2FA</strong> — Two-factor authentication setup (TOTP)</li>
+        <li><strong>Dark/Light Mode</strong> — Persisted theme preference</li>
+        <li><strong>Password Reset</strong> — OTP sent via email</li>
+        <li><strong>PWA</strong> — Works offline with service worker caching</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="qa-card" id="q5">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q5</span>
+      <span class="q-text">What is MongoDB and why was it chosen over MySQL/PostgreSQL?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p><strong>MongoDB</strong> is a NoSQL database that stores data as JSON-like documents instead of rows and columns.</p>
+      <p>Why MongoDB was the right choice for NoteVerse:</p>
+      <ul>
+        <li><strong>Flexible schema</strong> — A note can have different fields: some locked, some with collaborators, some with tags. MongoDB handles this naturally without migrations.</li>
+        <li><strong>Nested data</strong> — Collaborators are stored inside the Note document itself (embedded array), which is natural in MongoDB but would require a JOIN table in SQL.</li>
+        <li><strong>Rich content</strong> — Note content is stored as JSON (TipTap format), which MongoDB handles natively.</li>
+        <li><strong>Scalability</strong> — MongoDB Atlas scales automatically in the cloud.</li>
+      </ul>
+      <p>Example — a Note document in MongoDB:</p>
+      <pre><code>{
+  "_id": "abc123",
+  "title": "Meeting Notes",
+  "content": "...",
+  "tags": ["work", "important"],
+  "collaborators": [
+    { "userId": "u1", "email": "bob@mail.com", "permission": "READ" }
+  ],
+  "isPinned": true,
+  "isDeleted": false
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 2: FRONTEND
+  ══════════════════════════════════════════════════ -->
+  <div class="section-header intermediate" id="frontend">
+    <div class="section-icon">🔵</div>
+    <div>
+      <div class="section-title">Frontend — React & UI</div>
+      <div class="section-subtitle">React concepts, state management, routing, and UI patterns</div>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q6</span>
+      <span class="q-text">How is state managed in NoteVerse frontend?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>NoteVerse uses <strong>two layers of state management</strong>:</p>
+      <h4>1. React Context (Global UI State)</h4>
+      <ul>
+        <li><strong>AuthContext</strong> — stores the logged-in user, access token, login/logout functions</li>
+        <li><strong>ThemeContext</strong> — stores dark/light mode preference, saves to localStorage</li>
+        <li><strong>NoteContext</strong> — stores notes, folders, tags and their CRUD operations</li>
+      </ul>
+      <h4>2. TanStack React Query (Server State)</h4>
+      <p>For API data fetching, caching, and synchronization. Instead of manually calling APIs and storing results in useState, React Query handles it automatically with smart caching (5 minute stale time).</p>
+      <pre><code>// Example: NoteContext
+const AuthContext = createContext();
+
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('accessToken'));
+
+  const login = (userData, accessToken, refreshToken) => {
+    setUser(userData);
+    setToken(accessToken);
+    localStorage.setItem('accessToken', accessToken);
+  };
+
+  return &lt;AuthContext.Provider value={{ user, token, login, logout }}&gt;
+    {children}
+  &lt;/AuthContext.Provider&gt;;
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q7</span>
+      <span class="q-text">What is the difference between PrivateRoute and PublicRoute?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>These are custom route wrappers that control access based on authentication:</p>
+      <h4>PrivateRoute</h4>
+      <p>Only logged-in users can access it. If not logged in → redirect to /login.</p>
+      <pre><code>// Example usage
+&lt;Route path="/dashboard" element={
+  &lt;PrivateRoute&gt;&lt;DashboardPage /&gt;&lt;/PrivateRoute&gt;
+} /&gt;</code></pre>
+      <h4>PublicRoute</h4>
+      <p>Only logged-out users can access it. If already logged in → redirect to /dashboard. (Prevents a logged-in user from seeing the login page again.)</p>
+      <pre><code>// Example usage
+&lt;Route path="/login" element={
+  &lt;PublicRoute&gt;&lt;LoginPage /&gt;&lt;/PublicRoute&gt;
+} /&gt;</code></pre>
+      <div class="tip">This is a very common React interview question. The key point is that these are just wrapper components that check auth state and either render children or redirect.</div>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q8</span>
+      <span class="q-text">How does the Axios interceptor work in NoteVerse?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>An <strong>interceptor</strong> is middleware that runs before every request is sent or before every response is received. NoteVerse uses two interceptors:</p>
+      <h4>Request Interceptor — auto-add JWT token</h4>
+      <p>Before every API call, it reads the access token from localStorage and adds it to the Authorization header. You don't need to manually add the token in every API call.</p>
+      <pre><code>axiosInstance.interceptors.request.use((config) => {
+  const token = localStorage.getItem('accessToken');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});</code></pre>
+      <h4>Response Interceptor — auto-refresh expired tokens</h4>
+      <p>If the server returns 401 (token expired), it automatically:</p>
+      <ol>
+        <li>Calls <span class="inline-code">/api/auth/refresh</span> with the refresh token</li>
+        <li>Gets a new access token</li>
+        <li>Retries the original failed request</li>
+        <li>If refresh also fails → logs out and redirects to /login</li>
+      </ol>
+      <div class="tip">This creates a seamless experience — the user never sees "please log in again" unless the refresh token also expires (7 days).</div>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q9</span>
+      <span class="q-text">What is TipTap and why was it used for the note editor?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p><strong>TipTap</strong> is a headless rich text editor built on ProseMirror. "Headless" means it has no default styling — you style it yourself with Tailwind CSS.</p>
+      <p>Why TipTap instead of a simple textarea:</p>
+      <ul>
+        <li><strong>Rich formatting</strong> — Bold, italic, underline, headings, bullet lists, numbered lists, code blocks, highlights</li>
+        <li><strong>JSON output</strong> — Stores content as JSON (not HTML), which is safer and easier to work with in MongoDB</li>
+        <li><strong>Extensible</strong> — You can add custom extensions like image upload, mentions, tables</li>
+        <li><strong>React integration</strong> — Works perfectly as a React component</li>
+        <li><strong>Collaborative ready</strong> — Can be extended with real-time collaboration (Y.js)</li>
+      </ul>
+      <pre><code>const editor = useEditor({
+  extensions: [StarterKit, Bold, Italic, Heading, ...],
+  content: note.content,
+  editable: canEdit,
+  onUpdate: ({ editor }) => {
+    // Auto-save when content changes
+    setContent(editor.getJSON());
+  }
+});</code></pre>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q10</span>
+      <span class="q-text">How does dark/light mode work in NoteVerse?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>Dark/light mode is implemented using <strong>Tailwind CSS's dark mode class strategy</strong> + <strong>React Context</strong>.</p>
+      <h4>How it works:</h4>
+      <ol>
+        <li>ThemeContext stores the current theme (dark/light) in React state</li>
+        <li>The theme is saved to <span class="inline-code">localStorage</span> so it persists across page refreshes</li>
+        <li>When theme changes, the <span class="inline-code">dark</span> class is toggled on the root <span class="inline-code">&lt;html&gt;</span> element</li>
+        <li>Tailwind's <span class="inline-code">dark:</span> prefix applies different styles automatically</li>
+      </ol>
+      <pre><code>// In Tailwind CSS
+&lt;div className="bg-white dark:bg-gray-900 text-black dark:text-white"&gt;
+
+// tailwind.config.js
+module.exports = {
+  darkMode: 'class', // uses .dark class on html element
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q11</span>
+      <span class="q-text">What is a PWA? How is it implemented in NoteVerse?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p><strong>PWA (Progressive Web App)</strong> — a web app that works like a native app. It can be installed on your phone, work offline, and load fast.</p>
+      <h4>NoteVerse PWA features:</h4>
+      <ul>
+        <li><strong>manifest.json</strong> — defines app name, icon, theme color, so it can be "installed" on home screen</li>
+        <li><strong>Service Worker</strong> — a background script that caches API responses and static assets so the app loads even without internet</li>
+        <li><strong>IndexedDB (via idb)</strong> — stores notes locally in the browser database when offline</li>
+        <li><strong>Sync Queue</strong> — when you edit offline, changes are queued. When internet returns, they sync to the server</li>
+      </ul>
+      <div class="tip">A Service Worker is like a proxy between your app and the network. It intercepts requests and serves cached responses when offline.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 3: BACKEND
+  ══════════════════════════════════════════════════ -->
+  <div class="section-header intermediate" id="backend">
+    <div class="section-icon">🔵</div>
+    <div>
+      <div class="section-title">Backend — Spring Boot</div>
+      <div class="section-subtitle">Java, Spring Boot, REST controllers, services, and data access</div>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q12</span>
+      <span class="q-text">Explain the layered architecture of the Spring Boot backend.</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>The backend follows a clean <strong>4-layer architecture</strong>:</p>
+      <div class="flow">
+        <div class="flow-box">HTTP Request</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Controller</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Service</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Repository</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">MongoDB</div>
+      </div>
+      <table>
+        <tr><th>Layer</th><th>Responsibility</th><th>Example</th></tr>
+        <tr><td><strong>Controller</strong></td><td>Handles HTTP requests, validates input, returns responses</td><td>NoteController.java</td></tr>
+        <tr><td><strong>Service</strong></td><td>Contains business logic</td><td>NoteService.java</td></tr>
+        <tr><td><strong>Repository</strong></td><td>Database queries (Spring Data MongoDB)</td><td>NoteRepository.java</td></tr>
+        <tr><td><strong>Model</strong></td><td>Data structures mapped to MongoDB collections</td><td>Note.java</td></tr>
+        <tr><td><strong>DTO</strong></td><td>Objects for request/response (what the API accepts/returns)</td><td>NoteRequest.java, NoteResponse.java</td></tr>
+      </table>
+      <div class="tip">Controllers should be thin — just handle HTTP. Business logic belongs in Services. Data access belongs in Repositories. This separation makes code testable and maintainable.</div>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q13</span>
+      <span class="q-text">What is the difference between @RestController and @Controller in Spring?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <table>
+        <tr><th>@Controller</th><th>@RestController</th></tr>
+        <tr><td>Returns a view (HTML page) name</td><td>Returns data directly (JSON/XML)</td></tr>
+        <tr><td>Used for MVC web apps</td><td>Used for REST APIs</td></tr>
+        <tr><td>Needs @ResponseBody on each method</td><td>@ResponseBody is built-in</td></tr>
+      </table>
+      <p>NoteVerse uses <span class="inline-code">@RestController</span> everywhere because it's a REST API — it always returns JSON, never HTML pages.</p>
+      <pre><code>@RestController
+@RequestMapping("/api/notes")
+public class NoteController {
+    @GetMapping("/{id}")
+    public ResponseEntity&lt;ApiResponse&lt;NoteResponse&gt;&gt; getNote(@PathVariable String id) {
+        // Returns JSON automatically
+        return ResponseEntity.ok(ApiResponse.success("Note found", noteResponse));
+    }
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q14</span>
+      <span class="q-text">What is Lombok and how does NoteVerse use it?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p><strong>Lombok</strong> is a Java library that reduces boilerplate code using annotations. It auto-generates getters, setters, constructors, equals/hashCode, toString at compile time.</p>
+      <p>NoteVerse uses these Lombok annotations:</p>
+      <table>
+        <tr><th>Annotation</th><th>What it generates</th></tr>
+        <tr><td>@Data</td><td>All getters, setters, equals, hashCode, toString</td></tr>
+        <tr><td>@Builder</td><td>Builder pattern (User.builder().name("x").build())</td></tr>
+        <tr><td>@NoArgsConstructor</td><td>Empty constructor</td></tr>
+        <tr><td>@AllArgsConstructor</td><td>Constructor with all fields</td></tr>
+        <tr><td>@RequiredArgsConstructor</td><td>Constructor for final fields (used for injection)</td></tr>
+        <tr><td>@Slf4j</td><td>Adds log variable for logging</td></tr>
+      </table>
+      <pre><code>// Without Lombok — 50+ lines
+// With Lombok — just this:
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Document("notes")
+public class Note {
+    @Id private String id;
+    private String title;
+    private String content;
+    // Lombok generates all getters/setters automatically
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q15</span>
+      <span class="q-text">What is a DTO and why is it used?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p><strong>DTO (Data Transfer Object)</strong> — a simple object used to carry data between layers. It's NOT the same as the Model/Entity.</p>
+      <h4>Why use DTOs?</h4>
+      <ul>
+        <li><strong>Security</strong> — Don't expose sensitive fields. The User model has `password` and `twoFactorSecret` — the UserResponse DTO excludes these.</li>
+        <li><strong>Validation</strong> — DTOs have @Valid annotations to validate incoming data before processing.</li>
+        <li><strong>Flexibility</strong> — API response shape can differ from database shape.</li>
+      </ul>
+      <pre><code>// Model — stored in MongoDB
+public class User {
+    private String password;      // stored in DB
+    private String twoFactorSecret; // stored in DB
+    private String email;
+}
+
+// Response DTO — sent to frontend
+public class UserResponse {
+    // No password, no twoFactorSecret!
+    private String id;
+    private String email;
+    private String name;
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q16</span>
+      <span class="q-text">How does GlobalExceptionHandler work in NoteVerse?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p><strong>GlobalExceptionHandler</strong> is a centralized place to handle all exceptions thrown anywhere in the application. Without it, every exception becomes an unformatted 500 error.</p>
+      <p>In NoteVerse, it uses <span class="inline-code">@RestControllerAdvice</span> which intercepts exceptions from all controllers:</p>
+      <pre><code>@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+  @ExceptionHandler(ResourceNotFoundException.class)
+  public ResponseEntity&lt;ApiResponse&gt; handleNotFound(ResourceNotFoundException ex) {
+    return ResponseEntity.status(404).body(ApiResponse.error(ex.getMessage()));
+  }
+
+  @ExceptionHandler(BadCredentialsException.class)
+  public ResponseEntity&lt;ApiResponse&gt; handleBadCredentials(...) {
+    return ResponseEntity.status(401).body(ApiResponse.error("Invalid email or password"));
+  }
+
+  @ExceptionHandler(Exception.class) // catch-all
+  public ResponseEntity&lt;ApiResponse&gt; handleGeneric(Exception ex) {
+    return ResponseEntity.status(500).body(ApiResponse.error("Unexpected error"));
+  }
+}</code></pre>
+      <div class="tip">The order matters — more specific handlers are checked first, the generic Exception.class handler is always last.</div>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q17</span>
+      <span class="q-text">How does soft delete work for notes?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p><strong>Soft delete</strong> means the data is NOT actually removed from the database. Instead, a flag is set to mark it as deleted. The user sees it in the "Trash" and can restore it.</p>
+      <h4>How it works in NoteVerse:</h4>
+      <p>The Note model has two fields:</p>
+      <pre><code>private boolean isDeleted = false;
+private LocalDateTime deletedAt;  // when it was deleted</code></pre>
+      <p>When user clicks "Delete":</p>
+      <pre><code>// NoteService.deleteNote()
+note.setDeleted(true);
+note.setDeletedAt(LocalDateTime.now());
+noteRepository.save(note); // NOT removed from DB</code></pre>
+      <p>When fetching notes, deleted ones are filtered out:</p>
+      <pre><code>// NoteRepository
+List&lt;Note&gt; findByUserIdAndIsDeletedFalse(String userId);</code></pre>
+      <p>Permanent delete actually removes from DB:</p>
+      <pre><code>noteRepository.delete(note); // actually removed</code></pre>
+      <p>Notes in trash are auto-deleted after 30 days (shown as a warning in the UI).</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 4: SECURITY
+  ══════════════════════════════════════════════════ -->
+  <div class="section-header advanced" id="security">
+    <div class="section-icon">🔴</div>
+    <div>
+      <div class="section-title">Security — JWT & Authentication</div>
+      <div class="section-subtitle">Deep dive into JWT, Spring Security, CORS, and auth patterns</div>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q18</span>
+      <span class="q-text">What is JWT and how does it work in NoteVerse?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p><strong>JWT (JSON Web Token)</strong> is a compact, self-contained way to transmit authentication information between client and server. It does NOT require storing session data on the server.</p>
+      <h4>JWT Structure (3 parts separated by dots):</h4>
+      <pre><code>header.payload.signature
+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4LmNvbSJ9.xyzSignature</code></pre>
+      <ul>
+        <li><strong>Header</strong> — algorithm used (HMAC-SHA256)</li>
+        <li><strong>Payload</strong> — data: email (subject), issued time, expiry time, token type</li>
+        <li><strong>Signature</strong> — Header + Payload signed with JWT_SECRET. Ensures data hasn't been tampered.</li>
+      </ul>
+      <h4>NoteVerse uses TWO tokens:</h4>
+      <table>
+        <tr><th>Token</th><th>Expiry</th><th>Purpose</th></tr>
+        <tr><td>Access Token</td><td>15 minutes</td><td>Used in every API request header</td></tr>
+        <tr><td>Refresh Token</td><td>7 days</td><td>Used to get a new access token when it expires</td></tr>
+      </table>
+      <h4>Full login flow:</h4>
+      <div class="flow">
+        <div class="flow-box">Login Request</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Verify password</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Generate JWT</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Store in localStorage</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Send in every request</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q19</span>
+      <span class="q-text">How does the JwtAuthFilter work step by step?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>The <strong>JwtAuthFilter</strong> runs on EVERY incoming HTTP request before it reaches the controller. It checks if the request has a valid JWT token.</p>
+      <h4>Step-by-step flow:</h4>
+      <ol>
+        <li>Read the <span class="inline-code">Authorization</span> header from the request</li>
+        <li>If header is missing or doesn't start with "Bearer " → skip (let Spring Security handle it)</li>
+        <li>Extract the JWT token (remove "Bearer " prefix)</li>
+        <li>Extract the email from the token's payload</li>
+        <li>Load the user from the database using that email</li>
+        <li>Validate: token signature correct? not expired?</li>
+        <li>If valid → set the user as authenticated in SecurityContext</li>
+        <li>Continue to the controller</li>
+      </ol>
+      <pre><code>// JwtAuthFilter.java (simplified)
+String authHeader = request.getHeader("Authorization");
+if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+    filterChain.doFilter(request, response); // skip
+    return;
+}
+String jwt = authHeader.substring(7);
+String email = jwtUtils.extractUsername(jwt);
+UserDetails user = userDetailsService.loadUserByUsername(email);
+if (jwtUtils.validateToken(jwt, user)) {
+    // Set authenticated — now controller sees logged-in user
+    SecurityContextHolder.getContext().setAuthentication(authToken);
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q20</span>
+      <span class="q-text">What is BCrypt and why is it used for passwords?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p><strong>BCrypt</strong> is a password hashing algorithm. Instead of storing "password123" in the database, NoteVerse stores something like <span class="inline-code">$2a$10$xyz...randomhash</span>.</p>
+      <h4>Why BCrypt?</h4>
+      <ul>
+        <li><strong>One-way</strong> — You can't reverse a BCrypt hash to get the original password</li>
+        <li><strong>Salt included</strong> — Every hash is unique even for the same password (prevents rainbow table attacks)</li>
+        <li><strong>Slow by design</strong> — Takes ~100ms to hash, making brute force very slow</li>
+        <li><strong>Industry standard</strong> — Used by Spring Security by default</li>
+      </ul>
+      <pre><code>// Register — hash the password before saving
+user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+// Login — compare without unhashing
+boolean matches = passwordEncoder.matches(rawPassword, hashedPassword);
+// BCrypt compares safely — never decrypts</code></pre>
+      <div class="warning">Never store plain text passwords. If your database is leaked, BCrypt-hashed passwords are extremely hard to crack.</div>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q21</span>
+      <span class="q-text">What is CORS and how is it configured in NoteVerse?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p><strong>CORS (Cross-Origin Resource Sharing)</strong> is a browser security feature. By default, a webpage at <span class="inline-code">frontend.com</span> cannot make API calls to <span class="inline-code">backend.com</span> — they're different origins.</p>
+      <h4>What is "origin"?</h4>
+      <p>Origin = protocol + domain + port. These are different origins:</p>
+      <ul>
+        <li><span class="inline-code">https://noteverse-1.onrender.com</span> (frontend)</li>
+        <li><span class="inline-code">https://noteverse-8e4i.onrender.com</span> (backend)</li>
+      </ul>
+      <h4>How NoteVerse configures CORS:</h4>
+      <pre><code>@Bean
+public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration config = new CorsConfiguration();
+    config.setAllowedOrigins(List.of("https://noteverse-1.onrender.com"));
+    config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+    config.setAllowedHeaders(List.of("*"));
+    config.setAllowCredentials(true); // allow cookies/auth headers
+    // ...
+}</code></pre>
+      <p>The frontend URL comes from the <span class="inline-code">FRONTEND_URL</span> environment variable — no hardcoding. NoteVerse also strips trailing slashes to prevent CORS mismatch bugs.</p>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q22</span>
+      <span class="q-text">What is Spring Security's filter chain? How does it work in NoteVerse?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>Spring Security processes every request through a <strong>chain of filters</strong> before it reaches your controller. Each filter checks/modifies the request.</p>
+      <h4>NoteVerse filter chain order:</h4>
+      <div class="flow" style="flex-direction:column; align-items:flex-start;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div class="flow-box" style="width:200px;">1. CORS Filter</div>
+          <span style="color:var(--muted)">← handles OPTIONS preflight, adds CORS headers</span>
+        </div>
+        <div class="flow-arrow" style="margin-left:24px;">↓</div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div class="flow-box" style="width:200px;">2. JwtAuthFilter</div>
+          <span style="color:var(--muted)">← extracts JWT, sets authenticated user</span>
+        </div>
+        <div class="flow-arrow" style="margin-left:24px;">↓</div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div class="flow-box" style="width:200px;">3. Authorization Check</div>
+          <span style="color:var(--muted)">← is this URL public or protected?</span>
+        </div>
+        <div class="flow-arrow" style="margin-left:24px;">↓</div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div class="flow-box" style="width:200px;">4. Controller</div>
+          <span style="color:var(--muted)">← request finally reaches your code</span>
+        </div>
+      </div>
+      <h4>Public vs Protected URLs:</h4>
+      <pre><code>// Public — no JWT needed
+"/api/auth/**"     // login, register, reset password
+"/api/health"      // health check
+"/api/share/public/**" // view shared notes
+
+// Protected — JWT required
+"/api/notes/**", "/api/folders/**", etc.</code></pre>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q23</span>
+      <span class="q-text">How does password reset work using OTP?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <h4>Step-by-step flow:</h4>
+      <ol>
+        <li>User enters their email on the Forgot Password page</li>
+        <li>Backend generates a random 6-digit OTP (using SecureRandom)</li>
+        <li>OTP is stored in an in-memory map with the email as key and 10-minute expiry</li>
+        <li>Email is sent with the OTP (via Spring Mail / Gmail SMTP)</li>
+        <li>User enters the OTP + new password</li>
+        <li>Backend validates: does OTP exist? is it expired? does it match?</li>
+        <li>If valid → hash and save new password, invalidate all active sessions</li>
+      </ol>
+      <pre><code>// OTP storage (in-memory)
+private final Map&lt;String, OtpEntry&gt; otpStore = new ConcurrentHashMap&lt;&gt;();
+
+// Generate OTP
+String otp = String.valueOf(100000 + random.nextInt(900000)); // 6-digit
+otpStore.put(email, new OtpEntry(otp)); // expires in 10 min
+emailService.sendPasswordResetEmail(email, name, otp);</code></pre>
+      <div class="warning">The OTP is stored in-memory (ConcurrentHashMap), not in the database. This means if the server restarts, all OTPs are lost. In production, Redis would be better.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 5: DATABASE
+  ══════════════════════════════════════════════════ -->
+  <div class="section-header advanced" id="database">
+    <div class="section-icon">🔴</div>
+    <div>
+      <div class="section-title">Database — MongoDB Design</div>
+      <div class="section-subtitle">Data modeling, repositories, indexing, and querying</div>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q24</span>
+      <span class="q-text">How many MongoDB collections does NoteVerse have? Explain each.</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>NoteVerse has <strong>9 MongoDB collections</strong>:</p>
+      <table>
+        <tr><th>Collection</th><th>Purpose</th><th>Key Fields</th></tr>
+        <tr><td>users</td><td>User accounts</td><td>email (unique), password, roles, twoFactorSecret</td></tr>
+        <tr><td>notes</td><td>All notes</td><td>title, content, userId, collaborators[], tags[], isDeleted</td></tr>
+        <tr><td>folders</td><td>Folder structure</td><td>name, userId, parentId (for nesting)</td></tr>
+        <tr><td>tags</td><td>Note labels</td><td>name, color, userId</td></tr>
+        <tr><td>sessions</td><td>Active login sessions</td><td>userId, refreshToken, isActive, lastActivity</td></tr>
+        <tr><td>sharedlinks</td><td>Public share links</td><td>noteId, token, permission, expiresAt, isActive</td></tr>
+        <tr><td>comments</td><td>Comments on notes</td><td>noteId, userId, content</td></tr>
+        <tr><td>auditlogs</td><td>User action history</td><td>userId, action, resource, ipAddress</td></tr>
+        <tr><td>notifications</td><td>User notifications</td><td>userId, type, message, isRead</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q25</span>
+      <span class="q-text">How does Spring Data MongoDB repository work? What is the query derivation?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p><strong>Spring Data MongoDB</strong> automatically generates database queries from method names — you don't write any MongoDB query code!</p>
+      <pre><code>public interface NoteRepository extends MongoRepository&lt;Note, String&gt; {
+
+    // Finds notes where userId = ? AND isDeleted = false
+    List&lt;Note&gt; findByUserIdAndIsDeletedFalse(String userId);
+
+    // Finds notes where 'collaborators' array contains {userId: ?}
+    List&lt;Note&gt; findByCollaboratorsUserIdAndIsDeletedFalse(String userId);
+
+    // Full-text search in title or content
+    List&lt;Note&gt; findByUserIdAndTitleContainingIgnoreCase(String userId, String keyword);
+
+    // Find deleted notes for trash page
+    List&lt;Note&gt; findByUserIdAndIsDeletedTrue(String userId);
+}</code></pre>
+      <p>Spring reads the method name and generates MongoDB queries automatically:</p>
+      <ul>
+        <li><span class="inline-code">findBy</span> → WHERE clause</li>
+        <li><span class="inline-code">And</span> → AND condition</li>
+        <li><span class="inline-code">IsDeletedFalse</span> → { isDeleted: false }</li>
+        <li><span class="inline-code">ContainingIgnoreCase</span> → regex search, case-insensitive</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q26</span>
+      <span class="q-text">How is collaboration implemented? How are collaborators stored?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>Collaborators are stored as an <strong>embedded array inside the Note document</strong> — no separate collection needed.</p>
+      <pre><code>// Note.java model
+private List&lt;Collaborator&gt; collaborators = new ArrayList&lt;&gt;();
+
+// Collaborator embedded object
+public class Collaborator {
+    private String userId;
+    private String email;
+    private String permission; // "READ" or "WRITE"
+    private LocalDateTime addedAt;
+}</code></pre>
+      <h4>Access control logic:</h4>
+      <pre><code>private Note findNoteWithAccess(String noteId, String userId, String required) {
+    Note note = noteRepository.findById(noteId)...;
+
+    // Owner always has full access
+    if (note.getUserId().equals(userId)) return note;
+
+    // Check collaborator list
+    boolean allowed = note.getCollaborators().stream().anyMatch(c ->
+        c.getUserId().equals(userId) &&
+        ("READ".equals(required) || "WRITE".equals(c.getPermission()))
+    );
+    if (allowed) return note;
+
+    throw new UnauthorizedException("No permission");
+}</code></pre>
+      <div class="tip">Embedding collaborators in the Note document is an intentional MongoDB design decision. It avoids JOINs and makes access checks fast (single document read).</div>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q27</span>
+      <span class="q-text">What is @CreatedDate and @LastModifiedDate? How does @EnableMongoAuditing work?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>These are Spring Data MongoDB <strong>auditing annotations</strong> that automatically set timestamps — you never set <span class="inline-code">createdAt</span> or <span class="inline-code">updatedAt</span> manually.</p>
+      <pre><code>// In Note.java, User.java, etc.
+@CreatedDate
+private LocalDateTime createdAt;  // set automatically on first save
+
+@LastModifiedDate
+private LocalDateTime updatedAt;  // updated automatically on every save</code></pre>
+      <p>To enable this, the main application class has:</p>
+      <pre><code>@SpringBootApplication
+@EnableMongoAuditing  // enables automatic timestamp management
+public class NoteVerseApplication { ... }</code></pre>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 6: ADVANCED
+  ══════════════════════════════════════════════════ -->
+  <div class="section-header advanced" id="advanced">
+    <div class="section-icon">🔴</div>
+    <div>
+      <div class="section-title">Advanced — Architecture & Design</div>
+      <div class="section-subtitle">Design patterns, scaling, optimization, and architectural decisions</div>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q28</span>
+      <span class="q-text">Why is the app stateless? What does stateless mean?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p><strong>Stateless</strong> means the server does NOT remember anything between requests. Every request must carry all the information needed to process it — including the JWT token.</p>
+      <h4>Stateful (traditional sessions) vs Stateless (JWT):</h4>
+      <table>
+        <tr><th>Aspect</th><th>Stateful (Session)</th><th>Stateless (JWT)</th></tr>
+        <tr><td>Server stores</td><td>Session data in memory/DB</td><td>Nothing about user</td></tr>
+        <tr><td>Client stores</td><td>Session ID cookie</td><td>JWT token</td></tr>
+        <tr><td>Scaling</td><td>Difficult (sticky sessions needed)</td><td>Easy (any server can handle any request)</td></tr>
+        <tr><td>Logout</td><td>Delete server session</td><td>Token just expires (or blacklist it)</td></tr>
+      </table>
+      <p>In NoteVerse SecurityConfig:</p>
+      <pre><code>.sessionManagement(session ->
+    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+)</code></pre>
+      <div class="tip">Stateless architecture is key for scaling to multiple server instances. Any instance can handle any request since there's no shared session state.</div>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q29</span>
+      <span class="q-text">How does the share link feature work end-to-end?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <h4>Creating a share link:</h4>
+      <ol>
+        <li>Owner clicks Share → sets permission (VIEW/EDIT) and optional expiry date</li>
+        <li>Backend generates a random UUID token (32 hex chars)</li>
+        <li>A SharedLink document is saved in MongoDB: <span class="inline-code">{ noteId, token, permission, expiresAt, isActive: true }</span></li>
+        <li>A public URL is returned: <span class="inline-code">https://frontend.com/share/{token}</span></li>
+      </ol>
+      <h4>Accessing a shared note:</h4>
+      <ol>
+        <li>Anyone opens the share URL (no login required)</li>
+        <li>Frontend calls <span class="inline-code">GET /api/share/public/{token}</span> (public endpoint, no JWT needed)</li>
+        <li>Backend finds the SharedLink by token</li>
+        <li>Validates: is it active? is it expired?</li>
+        <li>Returns the note content if valid</li>
+        <li>Increments <span class="inline-code">viewCount</span> on the note</li>
+      </ol>
+      <pre><code>// SharedLink document
+{
+  "noteId": "abc123",
+  "token": "a1b2c3d4...", // random, hard to guess
+  "permission": "VIEW",
+  "expiresAt": "2024-12-31T23:59:59",
+  "isActive": true
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q30</span>
+      <span class="q-text">How does the refresh token flow prevent the user from being logged out frequently?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>Access tokens expire in 15 minutes for security. Without refresh tokens, users would have to log in every 15 minutes. Refresh tokens solve this silently.</p>
+      <h4>Silent token refresh flow:</h4>
+      <div class="flow" style="flex-direction:column; align-items:flex-start; gap:4px;">
+        <div class="flow-box">User makes API call with expired access token</div>
+        <div class="flow-arrow" style="margin-left:20px;">↓</div>
+        <div class="flow-box">Server returns 401 Unauthorized</div>
+        <div class="flow-arrow" style="margin-left:20px;">↓</div>
+        <div class="flow-box">Axios interceptor catches 401</div>
+        <div class="flow-arrow" style="margin-left:20px;">↓</div>
+        <div class="flow-box">Automatically calls POST /api/auth/refresh with refresh token</div>
+        <div class="flow-arrow" style="margin-left:20px;">↓</div>
+        <div class="flow-box">Server validates refresh token, issues new access token</div>
+        <div class="flow-arrow" style="margin-left:20px;">↓</div>
+        <div class="flow-box">Original request is retried with new access token</div>
+        <div class="flow-arrow" style="margin-left:20px;">↓</div>
+        <div class="flow-box">User sees nothing — seamless experience ✓</div>
+      </div>
+      <p>The refresh token itself lasts <strong>7 days</strong>. If you don't open the app for 7 days, you'll need to log in again.</p>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q31</span>
+      <span class="q-text">What design patterns are used in NoteVerse?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <table>
+        <tr><th>Pattern</th><th>Where Used</th><th>Why</th></tr>
+        <tr><td><strong>Builder Pattern</strong></td><td>User.builder(), Note.builder()</td><td>Clean object creation, avoids long constructors</td></tr>
+        <tr><td><strong>Repository Pattern</strong></td><td>NoteRepository, UserRepository</td><td>Separates data access from business logic</td></tr>
+        <tr><td><strong>Service Layer Pattern</strong></td><td>NoteService, AuthService</td><td>Business logic in one place, reusable</td></tr>
+        <tr><td><strong>DTO Pattern</strong></td><td>NoteRequest/NoteResponse</td><td>Decouples API contract from DB model</td></tr>
+        <tr><td><strong>Filter Chain</strong></td><td>JwtAuthFilter</td><td>Cross-cutting concerns (auth) without touching controllers</td></tr>
+        <tr><td><strong>Observer/Context</strong></td><td>AuthContext, ThemeContext</td><td>Share state without prop drilling</td></tr>
+        <tr><td><strong>Interceptor</strong></td><td>Axios interceptors</td><td>Add auth header + handle token refresh transparently</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q32</span>
+      <span class="q-text">How would you scale NoteVerse to handle millions of users?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>This is a common system design interview question. Here's how NoteVerse could scale:</p>
+      <h4>Current architecture issues at scale:</h4>
+      <ul>
+        <li>OTP store in-memory → lost on restart, can't scale to multiple instances</li>
+        <li>Single Docker container → vertical scaling limit</li>
+        <li>No caching → every request hits MongoDB</li>
+      </ul>
+      <h4>Scaling solutions:</h4>
+      <table>
+        <tr><th>Problem</th><th>Solution</th></tr>
+        <tr><td>OTP in memory</td><td>Move to Redis (fast, distributed, TTL support)</td></tr>
+        <tr><td>Single instance</td><td>Kubernetes (K8s) for horizontal scaling, load balancer</td></tr>
+        <tr><td>No caching</td><td>Redis cache for frequently read notes</td></tr>
+        <tr><td>Search performance</td><td>Elasticsearch for full-text search instead of MongoDB regex</td></tr>
+        <tr><td>Email sending</td><td>Queue emails via RabbitMQ/SQS (async, don't block API)</td></tr>
+        <tr><td>File storage</td><td>AWS S3 for note attachments/images</td></tr>
+        <tr><td>Real-time collab</td><td>WebSockets + Y.js for live collaborative editing</td></tr>
+      </table>
+      <div class="tip">Since NoteVerse uses stateless JWT, it's already ready for horizontal scaling — just add more instances behind a load balancer.</div>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q33</span>
+      <span class="q-text">What security vulnerabilities did you protect against?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <table>
+        <tr><th>Attack</th><th>Protection in NoteVerse</th></tr>
+        <tr><td><strong>SQL/NoSQL Injection</strong></td><td>Spring Data MongoDB uses parameterized queries — never raw string queries</td></tr>
+        <tr><td><strong>Brute Force</strong></td><td>Rate limiting filter; OTP expires in 10 min; BCrypt slows password checks</td></tr>
+        <tr><td><strong>CSRF</strong></td><td>Disabled (safe for JWT/stateless APIs; CSRF only matters for session cookies)</td></tr>
+        <tr><td><strong>XSS</strong></td><td>React escapes HTML by default; TipTap stores as JSON not raw HTML</td></tr>
+        <tr><td><strong>Broken Auth</strong></td><td>JWT signature validates every request; short access token expiry (15 min)</td></tr>
+        <tr><td><strong>Sensitive Data Exposure</strong></td><td>Passwords hashed with BCrypt; DTO pattern never exposes password/2FA fields</td></tr>
+        <tr><td><strong>Unauthorized Access</strong></td><td>Every note operation checks userId ownership + collaborator permission</td></tr>
+        <tr><td><strong>Weak JWT Key</strong></td><td>JwtUtils pads key to minimum 32 bytes required for HMAC-SHA256</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 7: DEVOPS
+  ══════════════════════════════════════════════════ -->
+  <div class="section-header system" id="devops">
+    <div class="section-icon">🟣</div>
+    <div>
+      <div class="section-title">DevOps — Docker, CI/CD & Deployment</div>
+      <div class="section-subtitle">Docker, GitHub Actions, Render, and production setup</div>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q34</span>
+      <span class="q-text">Explain the Dockerfile used in NoteVerse. What is a multi-stage build?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>NoteVerse uses a <strong>multi-stage Docker build</strong> — two separate stages in one Dockerfile to keep the final image small.</p>
+      <pre><code># Stage 1: BUILD — has Maven + JDK (heavy, ~600MB)
+FROM maven:3.9.6-eclipse-temurin-17 AS build
+WORKDIR /app
+COPY pom.xml .
+RUN mvn dependency:go-offline -q  # cache dependencies
+COPY src ./src
+RUN mvn clean package -DskipTests -q  # compile & build JAR
+
+# Stage 2: RUN — only JRE (lightweight, ~100MB)
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+COPY --from=build /app/target/noteverse-backend-*.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]</code></pre>
+      <h4>Why multi-stage?</h4>
+      <table>
+        <tr><th></th><th>Single Stage</th><th>Multi-Stage</th></tr>
+        <tr><td>Image size</td><td>~700MB (Maven + JDK)</td><td>~130MB (JRE only)</td></tr>
+        <tr><td>Security</td><td>Build tools exposed</td><td>Only runtime, minimal surface</td></tr>
+        <tr><td>Deploy speed</td><td>Slow (large image)</td><td>Fast (small image)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q35</span>
+      <span class="q-text">How does the GitHub Actions CI/CD pipeline work?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>NoteVerse uses GitHub Actions for Continuous Integration (CI) and Continuous Deployment (CD).</p>
+      <h4>Pipeline flow on every push to main:</h4>
+      <div class="flow" style="flex-direction:column; align-items:flex-start; gap:4px;">
+        <div class="flow-box">1. Push code to GitHub main branch</div>
+        <div class="flow-arrow" style="margin-left:20px;">↓ triggers automatically</div>
+        <div class="flow-box">2. Job 1: Build Backend (Maven -DskipTests)</div>
+        <div class="flow-box" style="margin-left:20px;">   Job 2: Build Frontend (npm ci + npm run build) — runs in parallel</div>
+        <div class="flow-arrow" style="margin-left:20px;">↓ both must pass</div>
+        <div class="flow-box">3. Job 3: Trigger Render backend deploy via webhook</div>
+        <div class="flow-box" style="margin-left:20px;">   Job 4: Trigger Render frontend deploy via webhook — parallel</div>
+      </div>
+      <h4>Secrets management:</h4>
+      <p>Sensitive values are stored in <strong>GitHub Repository Secrets</strong> (Settings → Secrets), not in code:</p>
+      <pre><code>env:
+  MONGODB_URI: ${{ secrets.MONGODB_URI }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  RENDER_BACKEND_DEPLOY_HOOK: ${{ secrets.RENDER_BACKEND_DEPLOY_HOOK }}</code></pre>
+      <div class="tip">Never hardcode secrets in code. GitHub Secrets are encrypted and only injected at runtime in GitHub Actions.</div>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q36</span>
+      <span class="q-text">How are environment variables managed across local dev and production?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <table>
+        <tr><th>Environment</th><th>Where secrets live</th></tr>
+        <tr><td>Local development</td><td><span class="inline-code">application-local.yml</span> (gitignored, on your machine only)</td></tr>
+        <tr><td>GitHub CI/CD</td><td>GitHub Repository Secrets (encrypted)</td></tr>
+        <tr><td>Production (Render)</td><td>Render service Environment Variables tab</td></tr>
+      </table>
+      <p>The <span class="inline-code">application.yml</span> uses Spring's <span class="inline-code">${VAR:default}</span> syntax:</p>
+      <pre><code>app:
+  jwt:
+    secret: ${JWT_SECRET}              # required, no default
+  frontend-url: ${FRONTEND_URL:http://localhost:3000}  # safe default for local dev
+spring:
+  mail:
+    host: ${MAIL_HOST:}  # empty default — mail is optional</code></pre>
+      <div class="warning">Never commit .env files or application-local.yml to git. Add them to .gitignore.</div>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q37</span>
+      <span class="q-text">Why does the frontend have a _redirects file? What problem does it solve?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p><strong>Problem:</strong> React Router handles routing on the client side (in the browser). When you navigate to <span class="inline-code">/dashboard</span> within the app, React Router handles it fine. But if you directly visit <span class="inline-code">https://noteverse.onrender.com/dashboard</span> in your browser or refresh the page, Render's CDN looks for a physical file called "dashboard" — which doesn't exist → 404 error.</p>
+      <h4>Solution — _redirects file:</h4>
+      <pre><code>/*  /index.html  200</code></pre>
+      <p>This tells Render: <em>"For ANY URL, serve index.html and return 200 OK."</em> React then loads, reads the URL, and React Router handles the routing in the browser.</p>
+      <div class="flow">
+        <div class="flow-box">User visits /dashboard</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Render serves index.html (200)</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">React loads</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">React Router reads /dashboard</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Shows Dashboard page ✓</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 8: BEHAVIORAL
+  ══════════════════════════════════════════════════ -->
+  <div class="section-header system" id="behavioral">
+    <div class="section-icon">🟣</div>
+    <div>
+      <div class="section-title">Behavioral & Project Story Questions</div>
+      <div class="section-subtitle">How to talk about your project in interviews</div>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q38</span>
+      <span class="q-text">What was the most challenging part of building NoteVerse?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>Good answer structure: <strong>Challenge → What I did → What I learned</strong></p>
+      <p><strong>Sample answer:</strong></p>
+      <p>"The most challenging part was setting up the <strong>production deployment on Render</strong>. Several issues came up in sequence: the Docker image couldn't find the JAR file because the version in the filename didn't match what I expected, then JWT_SECRET wasn't being picked up from environment variables, then the mail auto-configuration was crashing the app at startup even when email wasn't configured.</p>
+      <p>To fix each issue, I read the error logs carefully, traced the Spring Boot startup sequence, and made the app more resilient — using <span class="inline-code">${VAR:default}</span> syntax for optional configs, making JavaMailSender optional with <span class="inline-code">@Autowired(required=false)</span>, and padding short JWT keys automatically.</p>
+      <p>I learned that production deployment has very different failure modes than local development, and building resilient defaults is as important as building features."</p>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q39</span>
+      <span class="q-text">What would you improve in NoteVerse if you had more time?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <ol>
+        <li><strong>Real-time collaboration</strong> — Add WebSockets + Operational Transform (or Y.js) so multiple users can edit the same note simultaneously like Google Docs</li>
+        <li><strong>AI integration</strong> — The AI endpoints are scaffolded. I'd integrate OpenAI or Anthropic API for actual summarization and grammar checking</li>
+        <li><strong>Redis for OTP/caching</strong> — Replace in-memory OTP store with Redis for reliability across server restarts and horizontal scaling</li>
+        <li><strong>Unit and integration tests</strong> — Add JUnit 5 tests for services and MockMVC tests for controllers</li>
+        <li><strong>Note versioning UI</strong> — The backend tracks version history but the frontend doesn't have a UI to browse/restore versions</li>
+        <li><strong>Google/GitHub OAuth</strong> — The OAuth2 structure is planned but not fully implemented</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q40</span>
+      <span class="q-text">How would you explain NoteVerse to a non-technical interviewer?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p><strong>Sample answer (keep it simple and confident):</strong></p>
+      <p>"NoteVerse is a notes application I built from scratch — similar to Notion or Google Keep. Users can create an account, write formatted notes with headings, bullet points, and code snippets, organize them into folders and tags, and share them with teammates.</p>
+      <p>I built both the front-end (what the user sees in the browser) using React, and the back-end (the server that stores all the data) using Java with Spring Boot. The notes are stored in a cloud database called MongoDB Atlas.</p>
+      <p>The app is fully deployed online — anyone can register and use it. I also set up automated deployment, so whenever I push new code to GitHub, it automatically builds and deploys to the live site."</p>
+      <div class="tip">With non-technical interviewers, focus on: what problem it solves, that it's live, and that you built both frontend and backend. Avoid jargon.</div>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q41</span>
+      <span class="q-text">Quick fire: What does each annotation do? (@SpringBootApplication, @Service, @Repository, @Component, @Bean)</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <table>
+        <tr><th>Annotation</th><th>What it does</th></tr>
+        <tr><td><strong>@SpringBootApplication</strong></td><td>Main entry point. Combines @Configuration + @EnableAutoConfiguration + @ComponentScan. Tells Spring to auto-configure everything and scan for components.</td></tr>
+        <tr><td><strong>@Service</strong></td><td>Marks a class as a service (business logic layer). Spring manages it as a singleton bean. Same as @Component but more descriptive.</td></tr>
+        <tr><td><strong>@Repository</strong></td><td>Marks a class as a data access layer. Enables exception translation (converts DB exceptions to Spring exceptions).</td></tr>
+        <tr><td><strong>@Component</strong></td><td>Generic Spring-managed bean. Parent of @Service, @Repository, @Controller.</td></tr>
+        <tr><td><strong>@Bean</strong></td><td>Used in @Configuration classes to declare a bean manually. Used when you can't annotate the class itself (third-party classes).</td></tr>
+        <tr><td><strong>@Autowired</strong></td><td>Tells Spring to inject a dependency automatically. With @RequiredArgsConstructor, it's implicit for final fields.</td></tr>
+        <tr><td><strong>@Value</strong></td><td>Injects a value from application.yml: @Value("${app.jwt.secret}")</td></tr>
+        <tr><td><strong>@RestControllerAdvice</strong></td><td>Global exception handler — catches exceptions from all controllers.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q42</span>
+      <span class="q-text">What is the difference between @PathVariable, @RequestParam, and @RequestBody?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <table>
+        <tr><th>Annotation</th><th>Where data comes from</th><th>Example</th></tr>
+        <tr><td><strong>@PathVariable</strong></td><td>URL path segment</td><td>GET /api/notes/<strong>abc123</strong></td></tr>
+        <tr><td><strong>@RequestParam</strong></td><td>URL query parameter</td><td>GET /api/notes?<strong>page=0&size=10</strong></td></tr>
+        <tr><td><strong>@RequestBody</strong></td><td>JSON body of the request</td><td>POST /api/notes with JSON body</td></tr>
+      </table>
+      <pre><code>// @PathVariable
+@GetMapping("/{id}")
+public Note getNote(@PathVariable String id) { }
+
+// @RequestParam
+@GetMapping
+public List&lt;Note&gt; getNotes(
+    @RequestParam(defaultValue = "0") int page,
+    @RequestParam(defaultValue = "10") int size) { }
+
+// @RequestBody
+@PostMapping
+public Note createNote(@Valid @RequestBody NoteRequest request) { }</code></pre>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q43</span>
+      <span class="q-text">What is the ApiResponse wrapper class and why is it used?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p><strong>ApiResponse</strong> is a generic wrapper that ensures ALL API responses have the same consistent structure — whether success or error.</p>
+      <pre><code>public class ApiResponse&lt;T&gt; {
+    private boolean success;
+    private String message;
+    private T data;   // generic — works for any type
+}</code></pre>
+      <h4>Why consistent responses matter:</h4>
+      <ul>
+        <li>Frontend code is simpler — always check <span class="inline-code">response.data.success</span></li>
+        <li>Easy error handling — always check <span class="inline-code">response.data.message</span></li>
+        <li>Professional API design — follows REST best practices</li>
+      </ul>
+      <pre><code>// Success response
+{ "success": true, "message": "Note created", "data": { "id": "123", ... } }
+
+// Error response
+{ "success": false, "message": "Note not found", "data": null }</code></pre>
+    </div>
+  </div>
+
+  <div class="qa-card">
+    <div class="qa-question" onclick="toggle(this)">
+      <span class="q-num">Q44</span>
+      <span class="q-text">How does export to PDF work in NoteVerse?</span>
+      <span class="q-arrow">▼</span>
+    </div>
+    <div class="qa-answer">
+      <p>NoteVerse uses <strong>two approaches</strong> for export:</p>
+      <h4>Client-side (Frontend) — jsPDF + html2canvas</h4>
+      <ol>
+        <li>Take a screenshot of the rendered note HTML using <span class="inline-code">html2canvas</span></li>
+        <li>Add that image to a PDF using <span class="inline-code">jsPDF</span></li>
+        <li>Trigger browser download directly — no server involved</li>
+      </ol>
+      <h4>Server-side (Backend) — /api/export/{id}/pdf</h4>
+      <ol>
+        <li>Frontend calls the export API endpoint with authentication</li>
+        <li>Backend retrieves the note from MongoDB</li>
+        <li>Converts TipTap JSON content to formatted text</li>
+        <li>Returns the content as a downloadable file with proper Content-Type headers</li>
+      </ol>
+      <pre><code>// Markdown export example
+@GetMapping("/{noteId}/markdown")
+public ResponseEntity&lt;byte[]&gt; exportMarkdown(@PathVariable String noteId, ...) {
+    String content = "# " + note.getTitle() + "\n\n" + note.getContent();
+    byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
+    return ResponseEntity.ok()
+        .header("Content-Disposition", "attachment; filename=note.md")
+        .contentType(MediaType.TEXT_PLAIN)
+        .body(bytes);
+}</code></pre>
+    </div>
+  </div>
+
+</div><!-- end container -->
+
+<footer>
+  <p>NoteVerse Interview Preparation Guide</p>
+  <p style="margin-top:8px; font-size:0.85rem;">Built with ❤️ by Darshan Gami | <a href="https://github.com/DarshanGami/NoteVerse" style="color:var(--purple-light);">GitHub</a></p>
+</footer>
+
+<script>
+  // Toggle Q&A
+  function toggle(el) {
+    const card = el.parentElement;
+    card.classList.toggle('open');
+  }
+
+  // Search
+  function filterQA() {
+    const q = document.getElementById('search').value.toLowerCase();
+    document.querySelectorAll('.qa-card').forEach(card => {
+      const text = card.textContent.toLowerCase();
+      card.style.display = text.includes(q) ? '' : 'none';
+    });
+    document.querySelectorAll('.section-header').forEach(h => {
+      h.style.display = '';
+    });
+  }
+
+  // Open all cards that match on search
+  document.getElementById('search').addEventListener('input', function() {
+    if (this.value.length > 2) {
+      document.querySelectorAll('.qa-card').forEach(card => {
+        if (card.style.display !== 'none') card.classList.add('open');
+      });
+    }
+  });
+</script>
+</body>
+</html>
