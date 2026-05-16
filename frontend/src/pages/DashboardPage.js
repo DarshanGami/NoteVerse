@@ -19,7 +19,7 @@ const filterOptions = [
 
 const DashboardPage = () => {
   const navigate = useNavigate();
-  const { notes, folders, tags, selectedFolder, setSelectedFolder, refreshNotes } = useNotes();
+  const { notes, folders, tags, selectedFolder, setSelectedFolder, refreshNotes, refreshTags } = useNotes();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
   const [filter, setFilter] = useState('all');
@@ -39,6 +39,8 @@ const DashboardPage = () => {
       setLoading(false);
     }
   }, [selectedFolder, filter, selectedTag, refreshNotes]);
+
+  useEffect(() => { refreshTags(); }, [refreshTags]);
 
   useEffect(() => {
     loadNotes();
@@ -141,22 +143,27 @@ const DashboardPage = () => {
               )}
 
               {/* Tag filters */}
-              {tags.slice(0, 5).map((tag) => (
-                <button
+              {tags.slice(0, 8).map((tag) => (
+                <TagPill
                   key={tag.id}
+                  tag={tag}
+                  size="sm"
                   onClick={() => {
                     setSelectedTag(selectedTag?.id === tag.id ? null : tag);
                     setFilter('all');
                     setSelectedFolder(null);
                   }}
-                >
-                  <TagPill
-                    tag={tag}
-                    size="sm"
-                    onClick={() => {}}
-                  />
-                </button>
+                  style={selectedTag?.id === tag.id ? { opacity: 1, outline: `2px solid ${tag.color || '#6C63FF'}` } : {}}
+                />
               ))}
+              {selectedTag && (
+                <button
+                  onClick={() => setSelectedTag(null)}
+                  className="text-xs text-gray-500 hover:text-white px-2 py-1"
+                >
+                  Clear tag ×
+                </button>
+              )}
             </div>
 
             {/* Notes */}

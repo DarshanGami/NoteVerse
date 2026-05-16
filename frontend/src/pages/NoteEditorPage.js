@@ -9,6 +9,7 @@ import {
 import NoteEditor from '../components/notes/NoteEditor';
 import AIPanel from '../components/ai/AIPanel';
 import TagPill from '../components/common/TagPill';
+import TagSelector from '../components/notes/TagSelector';
 import Modal from '../components/common/Modal';
 import Button from '../components/common/Button';
 import CollaborateModal from '../components/notes/CollaborateModal';
@@ -22,7 +23,9 @@ const NoteEditorPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { folders, tags, refreshNotes } = useNotes();
+  const { folders, tags, refreshNotes, refreshTags } = useNotes();
+
+  useEffect(() => { refreshTags(); }, [refreshTags]);
   const { user } = useAuth();
 
   const isNew = !id || id === 'new';
@@ -261,6 +264,25 @@ const NoteEditorPage = () => {
                   <FiShare2 size={16} />
                 </button>
 
+                <TagSelector
+                  noteTags={note.tags || []}
+                  allTags={tags}
+                  onUpdate={async (newTagIds) => {
+                    try {
+                      const res = await notesApi.updateNote(note.id, {
+                        title: note.title,
+                        content: note.content,
+                        folderId: note.folderId,
+                        isPinned: note.isPinned,
+                        isFavourite: note.isFavourite,
+                        tags: newTagIds,
+                      });
+                      setNote(res.data.data);
+                    } catch { toast.error('Failed to update tags'); }
+                  }}
+                  onTagsRefresh={refreshTags}
+                />
+
                 <button
                   onClick={() => setShowCollaborateModal(true)}
                   className={`p-2 rounded-lg transition-colors ${
@@ -322,9 +344,10 @@ const NoteEditorPage = () => {
               </div>
               {note?.tags?.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mt-2">
-                  {note.tags.map((tag) => (
-                    <TagPill key={tag.id} tag={tag} size="xs" />
-                  ))}
+                  {note.tags.map((tagId) => {
+                    const tag = tags.find(t => t.id === tagId);
+                    return tag ? <TagPill key={tagId} tag={tag} size="xs" /> : null;
+                  })}
                 </div>
               )}
             </div>
