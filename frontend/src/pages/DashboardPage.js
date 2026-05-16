@@ -29,7 +29,7 @@ const DashboardPage = () => {
   const loadNotes = useCallback(async () => {
     setLoading(true);
     try {
-      const params = {};
+      const params = { size: 100 };
       if (selectedFolder) params.folderId = selectedFolder.id;
       if (filter === 'pinned') params.isPinned = true;
       if (filter === 'favourites') params.isFavourite = true;

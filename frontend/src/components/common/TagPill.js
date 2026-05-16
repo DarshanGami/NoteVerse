@@ -1,7 +1,7 @@
 import React from 'react';
 import { FiX } from 'react-icons/fi';
 
-const TagPill = ({ tag, onRemove, onClick, size = 'sm' }) => {
+const TagPill = ({ tag, onRemove, onClick, size = 'sm', style: extraStyle }) => {
   const sizeClasses = {
     xs: 'text-xs px-2 py-0.5',
     sm: 'text-xs px-2.5 py-1',
@@ -20,6 +20,7 @@ const TagPill = ({ tag, onRemove, onClick, size = 'sm' }) => {
         backgroundColor: tag.color ? `${tag.color}25` : '#6C63FF25',
         color: tag.color || '#6C63FF',
         border: `1px solid ${tag.color ? `${tag.color}50` : '#6C63FF50'}`,
+        ...extraStyle,
       }}
       onClick={onClick}
     >

@@ -39,6 +39,7 @@ public class NoteController {
             @RequestParam(required = false) String folderId,
             @RequestParam(required = false) Boolean isPinned,
             @RequestParam(required = false) Boolean isFavourite,
+            @RequestParam(required = false) String tagId,
             @RequestParam(required = false) String search) {
 
         String userId = getUserId(authentication);
@@ -50,7 +51,7 @@ public class NoteController {
 
         Sort.Direction sortDirection = "ASC".equalsIgnoreCase(direction) ? Sort.Direction.ASC : Sort.Direction.DESC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
-        Page<NoteResponse> notes = noteService.getNotes(userId, pageable, folderId, isPinned, isFavourite);
+        Page<NoteResponse> notes = noteService.getNotes(userId, pageable, folderId, isPinned, isFavourite, tagId);
         return ResponseEntity.ok(ApiResponse.success("Notes retrieved successfully", notes));
     }
 

@@ -35,6 +35,8 @@ public interface NoteRepository extends MongoRepository<Note, String> {
 
     long countByUserIdAndIsDeletedFalse(String userId);
 
+    Page<Note> findByUserIdAndTagsContainingAndIsDeletedFalse(String userId, String tagId, Pageable pageable);
+
     @Query("{ 'collaborators.userId': ?0, 'isDeleted': false }")
     List<Note> findSharedWithUser(String userId);
 }

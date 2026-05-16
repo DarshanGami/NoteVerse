@@ -98,7 +98,7 @@ public class NoteService {
     }
 
     public Page<NoteResponse> getNotes(String emailOrId, Pageable pageable, String folderId,
-                                        Boolean isPinned, Boolean isFavourite) {
+                                        Boolean isPinned, Boolean isFavourite, String tagId) {
         String userId = resolveUserId(emailOrId);
         Page<Note> notes;
 
@@ -108,6 +108,8 @@ public class NoteService {
             notes = noteRepository.findByUserIdAndIsPinnedTrueAndIsDeletedFalse(userId, pageable);
         } else if (Boolean.TRUE.equals(isFavourite)) {
             notes = noteRepository.findByUserIdAndIsFavouriteTrueAndIsDeletedFalse(userId, pageable);
+        } else if (tagId != null && !tagId.isEmpty()) {
+            notes = noteRepository.findByUserIdAndTagsContainingAndIsDeletedFalse(userId, tagId, pageable);
         } else {
             notes = noteRepository.findByUserIdAndIsDeletedFalse(userId, pageable);
         }
